@@ -10,59 +10,163 @@ import { Music2, VolumeX } from "lucide-react";
 import { personalMedia } from "./config";
 export type Sound =
   "chime" | "envelope" | "portal" | "star" | "unlock" | "celebration";
-const preferenceKey = "romjan-universe-music-v1";
+const preferenceKey = "romjan-visit-music-v2";
+function readPreference() {
+  try {
+    return sessionStorage.getItem(preferenceKey) !== "muted";
+  } catch {
+    return true;
+  }
+}
 const AudioState = createContext({
-  enabled: false,
+  enabled: true,
   activated: false,
+  error: "",
   toggle: () => {},
   sound: (_sound: Sound) => {},
 });
 export const useMagicAudio = () => useContext(AudioState);
-function initialPreference() {
-  try {
-    return JSON.parse(localStorage.getItem(preferenceKey) || "false") === true;
-  } catch {
-    return false;
-  }
-}
 export function AudioProvider({ children }: { children: React.ReactNode }) {
-  const [enabled, setEnabled] = useState(initialPreference);
+  const [enabled, setEnabled] = useState(readPreference);
   const [activated, setActivated] = useState(false);
-  const [visible, setVisible] = useState(!document.hidden);
-  const context = useRef<AudioContext | null>(null);
-  const sources = useRef(new Set<OscillatorNode>());
-  const mounted = useRef(false);
+  const [error, setError] = useState("");
   const enabledRef = useRef(enabled);
   enabledRef.current = enabled;
-  const activatedRef = useRef(activated);
-  activatedRef.current = activated;
+  const activatedRef = useRef(false),
+    mounted = useRef(false),
+    starting = useRef(false);
   const music = useRef<HTMLAudioElement | null>(null);
-  const [useFile, setUseFile] = useState(Boolean(personalMedia.ambientMusic));
-  const activate = useCallback(async () => {
+  const context = useRef<AudioContext | null>(null);
+  const mediaSource = useRef<MediaElementAudioSourceNode | null>(null);
+  const musicGain = useRef<GainNode | null>(null);
+  const sources = useRef(new Set<OscillatorNode>());
+  const generation = useRef(0),
+    fadeFrame = useRef<number | null>(null);
+  const pausePlayback = useCallback(() => {
+    generation.current++;
+    starting.current = false;
+    if (fadeFrame.current !== null) {
+      cancelAnimationFrame(fadeFrame.current);
+      fadeFrame.current = null;
+    }
+    music.current?.pause();
+    const ctx = context.current;
+    if (ctx && musicGain.current) {
+      musicGain.current.gain.cancelScheduledValues(ctx.currentTime);
+      musicGain.current.gain.setValueAtTime(0, ctx.currentTime);
+    }
+    for (const source of sources.current) {
+      try {
+        source.stop();
+      } catch {
+        /* Already ended. */
+      }
+    }
+    void ctx?.suspend().catch(() => {});
+  }, []);
+  const startPlayback = useCallback(() => {
+    if (
+      !mounted.current ||
+      !enabledRef.current ||
+      document.hidden ||
+      starting.current
+    )
+      return;
+    if (music.current && !music.current.paused) return;
+    const ticket = ++generation.current;
+    starting.current = true;
+    setError("");
+    let player = music.current;
+    if (!player) {
+      player = new Audio(personalMedia.ambientMusic);
+      player.loop = true;
+      player.preload = "auto";
+      player.addEventListener("error", () => {
+        if (mounted.current) {
+          pausePlayback();
+          setError("Music could not load. Tap the music button to retry.");
+        }
+      });
+      music.current = player;
+    }
     try {
-      if (typeof AudioContext === "undefined") return;
-      if (!context.current || context.current.state === "closed")
+      if (typeof AudioContext !== "undefined" && !context.current)
         context.current = new AudioContext();
-      await context.current.resume();
-      if (mounted.current) {
-        activatedRef.current = true;
-        setActivated(true);
+      if (context.current && !mediaSource.current) {
+        const gain = context.current.createGain();
+        gain.gain.value = 0;
+        const source = context.current.createMediaElementSource(player);
+        source.connect(gain);
+        gain.connect(context.current.destination);
+        mediaSource.current = source;
+        musicGain.current = gain;
       }
     } catch {
-      /* The journey remains usable if browser audio is unavailable. */
+      /* Use HTML audio when the Web Audio graph is unavailable. */
     }
-  }, []);
-  const note = useCallback(
-    (frequency: number, time: number, duration: number, volume = 0.025) => {
-      const ctx = context.current;
-      if (!ctx || ctx.state !== "running") return;
-      const oscillator = ctx.createOscillator();
-      const gain = ctx.createGain();
+    const ctx = context.current;
+    player.volume = musicGain.current ? 1 : 0;
+    if (player.error) player.load();
+    // Both calls happen synchronously within the interaction to satisfy Safari autoplay rules.
+    const resume = ctx?.resume() ?? Promise.resolve();
+    void Promise.all([resume, player.play()])
+      .then(() => {
+        if (!mounted.current || ticket !== generation.current) return;
+        starting.current = false;
+        if (!enabledRef.current || document.hidden) {
+          pausePlayback();
+          return;
+        }
+        const gain = musicGain.current;
+        if (ctx && gain) {
+          gain.gain.cancelScheduledValues(ctx.currentTime);
+          gain.gain.setValueAtTime(0, ctx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.23, ctx.currentTime + 1.5);
+        } else {
+          const start = performance.now();
+          const fade = (now: number) => {
+            if (ticket !== generation.current) return;
+            player.volume = 0.23 * Math.min((now - start) / 1500, 1);
+            if (now - start < 1500)
+              fadeFrame.current = requestAnimationFrame(fade);
+            else fadeFrame.current = null;
+          };
+          fadeFrame.current = requestAnimationFrame(fade);
+        }
+      })
+      .catch(() => {
+        if (!mounted.current || ticket !== generation.current) return;
+        pausePlayback();
+        setError("Music is paused. Tap the music button to try again.");
+      });
+  }, [pausePlayback]);
+  const sound = useCallback((kind: Sound) => {
+    const ctx = context.current;
+    if (
+      !enabledRef.current ||
+      !activatedRef.current ||
+      document.hidden ||
+      !ctx ||
+      ctx.state !== "running"
+    )
+      return;
+    const notes: Record<Sound, number[]> = {
+      envelope: [392, 587.33, 783.99],
+      portal: [196, 293.66, 440, 587.33],
+      star: [783.99, 1174.66],
+      unlock: [329.63, 493.88, 659.25, 987.77],
+      celebration: [261.63, 329.63, 392, 523.25, 659.25],
+      chime: [523.25, 783.99],
+    };
+    notes[kind]?.forEach((pitch, i) => {
+      const oscillator = ctx.createOscillator(),
+        gain = ctx.createGain(),
+        time = ctx.currentTime + i * 0.13;
       oscillator.type = "sine";
-      oscillator.frequency.value = frequency;
+      oscillator.frequency.value = pitch;
       gain.gain.setValueAtTime(0, time);
-      gain.gain.linearRampToValueAtTime(volume, time + 0.06);
-      gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+      gain.gain.linearRampToValueAtTime(0.025, time + 0.06);
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + 1.1);
       oscillator.connect(gain);
       gain.connect(ctx.destination);
       sources.current.add(oscillator);
@@ -72,145 +176,124 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
         gain.disconnect();
       };
       oscillator.start(time);
-      oscillator.stop(time + duration + 0.05);
-    },
-    [],
-  );
-  const sound = useCallback(
-    (kind: Sound) => {
-      if (!enabledRef.current || !activatedRef.current || document.hidden)
-        return;
-      const ctx = context.current;
-      if (!ctx || ctx.state !== "running") return;
-      const notes: Record<Sound, number[]> = {
-        envelope: [392, 587.33, 783.99],
-        portal: [196, 293.66, 440, 587.33],
-        star: [783.99, 1174.66],
-        unlock: [329.63, 493.88, 659.25, 987.77],
-        celebration: [261.63, 329.63, 392, 523.25, 659.25],
-        chime: [523.25, 783.99],
-      };
-      notes[kind].forEach((pitch, i) =>
-        note(pitch, ctx.currentTime + i * 0.13, 1.1, 0.025),
-      );
-    },
-    [note],
-  );
+      oscillator.stop(time + 1.15);
+    });
+  }, []);
   useEffect(() => {
     mounted.current = true;
-    const interaction = () => {
-      if (enabledRef.current && !activatedRef.current) void activate();
-    };
-    const clicks = (event: MouseEvent) => {
+    const interaction = (event: MouseEvent) => {
       const target =
         event.target instanceof Element
-          ? event.target.closest<HTMLElement>("[data-sound]")
+          ? event.target.closest("[data-sound]")
           : null;
-      if (target?.dataset.sound) sound(target.dataset.sound as Sound);
+      if (
+        !target ||
+        target.getAttribute("aria-disabled") === "true" ||
+        target.matches(":disabled")
+      )
+        return;
+      let returning = false;
+      try {
+        returning =
+          sessionStorage.getItem("romjan-visit-music-activated") === "true";
+      } catch {
+        /* Keep activation in memory. */
+      }
+      if (
+        target.getAttribute("data-sound") === "envelope" ||
+        returning ||
+        activatedRef.current
+      ) {
+        activatedRef.current = true;
+        setActivated(true);
+        try {
+          sessionStorage.setItem("romjan-visit-music-activated", "true");
+        } catch {
+          /* Keep in memory. */
+        }
+        startPlayback();
+      }
+      sound(target.getAttribute("data-sound") as Sound);
     };
-    const visibility = () => setVisible(!document.hidden);
-    document.addEventListener("pointerdown", interaction, { capture: true });
-    document.addEventListener("keydown", interaction, { capture: true });
-    document.addEventListener("click", clicks);
+    const visibility = () => {
+      if (document.hidden) pausePlayback();
+      else if (activatedRef.current && enabledRef.current) startPlayback();
+    };
+    // Capture before React disables the invitation button during its opening animation.
+    document.addEventListener("click", interaction, true);
     document.addEventListener("visibilitychange", visibility);
     return () => {
       mounted.current = false;
-      document.removeEventListener("pointerdown", interaction, true);
-      document.removeEventListener("keydown", interaction, true);
-      document.removeEventListener("click", clicks);
+      document.removeEventListener("click", interaction, true);
       document.removeEventListener("visibilitychange", visibility);
-      music.current?.pause();
+      pausePlayback();
+      const player = music.current;
+      music.current = null;
+      if (player) {
+        player.removeAttribute("src");
+        player.load();
+      }
+      mediaSource.current?.disconnect();
+      musicGain.current?.disconnect();
+      mediaSource.current = null;
+      musicGain.current = null;
       const ctx = context.current;
       context.current = null;
-      activatedRef.current = false;
       void ctx?.close().catch(() => {});
     };
-  }, [activate, sound]);
-  useEffect(() => {
+  }, [pausePlayback, startPlayback, sound]);
+  const toggle = () => {
+    const next = error ? true : !enabledRef.current;
+    enabledRef.current = next;
+    setEnabled(next);
     try {
-      localStorage.setItem(preferenceKey, JSON.stringify(enabled));
+      sessionStorage.setItem(preferenceKey, next ? "enabled" : "muted");
     } catch {
-      /* Preference is kept in memory when storage is blocked. */
+      /* Keep preference in memory. */
     }
-  }, [enabled]);
-  useEffect(() => {
-    if (!activated) return;
-    if (!enabled || !visible) {
-      music.current?.pause();
-      for (const source of sources.current) {
-        try {
-          source.stop();
-        } catch {
-          /* Already ended. */
-        }
-      }
-      void context.current?.suspend().catch(() => {});
+    if (!next) {
+      setError("");
+      pausePlayback();
       return;
     }
-    void context.current?.resume().catch(() => {});
-    if (useFile && personalMedia.ambientMusic) {
-      const player = music.current ?? new Audio(personalMedia.ambientMusic);
-      music.current = player;
-      player.loop = true;
-      player.volume = 0.25;
-      const failed = () => {
-        player.pause();
-        setUseFile(false);
-      };
-      player.addEventListener("error", failed);
-      void player.play().catch(failed);
-      return () => {
-        player.pause();
-        player.removeEventListener("error", failed);
-      };
+    activatedRef.current = true;
+    setActivated(true);
+    try {
+      sessionStorage.setItem("romjan-visit-music-activated", "true");
+    } catch {
+      /* Keep in memory. */
     }
-    let chord = 0;
-    const chords = [
-      [196, 246.94, 293.66],
-      [174.61, 220, 261.63],
-      [164.81, 196, 246.94],
-      [146.83, 196, 220],
-    ];
-    const play = () => {
-      const ctx = context.current;
-      if (!ctx || ctx.state !== "running") return;
-      chords[chord++ % chords.length].forEach((pitch, i) =>
-        note(pitch, ctx.currentTime + i * 0.24, 4, 0.013),
-      );
-    };
-    play();
-    const interval = setInterval(play, 3500);
-    return () => clearInterval(interval);
-  }, [enabled, activated, visible, useFile, note]);
-  const toggle = () => {
-    if (!enabled) {
-      void activate();
-      setEnabled(true);
-    } else setEnabled(false);
+    startPlayback();
   };
   return (
-    <AudioState.Provider value={{ enabled, activated, toggle, sound }}>
+    <AudioState.Provider value={{ enabled, activated, error, toggle, sound }}>
       {children}
     </AudioState.Provider>
   );
 }
 export function MusicControl({ className = "" }: { className?: string }) {
-  const { enabled, activated, toggle } = useMagicAudio();
+  const { enabled, activated, error, toggle } = useMagicAudio();
   return (
     <button
       className={`icon-button ${className}`}
       onClick={toggle}
-      aria-label={enabled ? "Mute music" : "Play music"}
+      aria-label={error ? "Retry music" : enabled ? "Mute music" : "Play music"}
       aria-pressed={enabled}
       title={
-        enabled && !activated
-          ? "Sound resumes after your first interaction"
+        error ||
+        (enabled && !activated
+          ? "Music starts when you open the invitation"
           : enabled
             ? "Music and magical sounds on"
-            : "Music and magical sounds off"
+            : "Music and magical sounds off")
       }
     >
       {enabled ? <Music2 size={19} /> : <VolumeX size={19} />}
+      {error && (
+        <span className="sr-only" role="status">
+          {error}
+        </span>
+      )}
     </button>
   );
 }

@@ -27,6 +27,7 @@ export type PersonalMedia = {
 };
 // Set local /media/... paths here when personal media is available.
 export const personalMedia: PersonalMedia = {
+  ambientMusic: "/audio/birthday-theme.mp3",
   photo: "/images/romjan/romjan-07.jpg",
   photoPosition: "50% 25%",
 };
