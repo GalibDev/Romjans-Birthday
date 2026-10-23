@@ -29,13 +29,25 @@ export async function saveBirthdayCard() {
     const img = new Image();
     img.onload = () => resolve(img);
     img.onerror = () => resolve(null);
-    img.src = "/art/celebration-world.png";
+    img.src = "/art/birthday-celebration-hd.webp";
   });
   if (image) {
     const height = 640;
     ctx.save();
     ctx.globalAlpha = 0.75;
-    ctx.drawImage(image, 0, 960, 1200, height);
+    // Preserve proportions while selecting the lower city and traveler for this strip.
+    const sourceHeight = (image.naturalWidth * height) / 1200;
+    ctx.drawImage(
+      image,
+      0,
+      image.naturalHeight * 0.49,
+      image.naturalWidth,
+      sourceHeight,
+      0,
+      960,
+      1200,
+      height,
+    );
     ctx.restore();
     const shade = ctx.createLinearGradient(0, 900, 0, 1600);
     shade.addColorStop(0, "#241b42");

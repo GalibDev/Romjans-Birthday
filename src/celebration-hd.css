@@ -1,0 +1,147 @@
+/* Scene 09 only: show the complete HD composition at its native aspect ratio. */
+.finale-scene.finale-hd {
+  --finale-inset: 23px;
+  padding-top: 0;
+  background: #10122b;
+}
+.finale-hd .finale-art-frame {
+  position: relative;
+  isolation: isolate;
+  align-self: center;
+  flex-shrink: 0;
+  width: calc(100% + var(--finale-inset) * 2);
+  aspect-ratio: 941/1672;
+}
+.finale-hd .celebration-landscape {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  filter: none;
+  opacity: 1;
+  mask-image: linear-gradient(#000 93%, transparent);
+  transition: none;
+}
+.finale-hd .finale-heading {
+  position: absolute;
+  top: var(--scene-top);
+  left: var(--finale-inset);
+  right: var(--finale-inset);
+  width: auto;
+  min-height: 0;
+  padding: 12px 10px 17px;
+  text-shadow:
+    0 1px 5px #100c29,
+    0 0 15px #efb5cc80;
+}
+.finale-hd .finale-heading:before {
+  content: "";
+  position: absolute;
+  inset: -14px -5px;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse,
+    #141129b8 12%,
+    #14112970 50%,
+    transparent 74%
+  );
+}
+.finale-hd .finale-heading > p:first-child {
+  font-size: clamp(27px, 7.8vw, 33px);
+  color: #ffe3d1;
+}
+.finale-hd .finale-heading h1 {
+  font-size: clamp(59px, 17vw, 73px);
+  color: #ffddcf;
+  margin-bottom: 9px;
+}
+.finale-hd .finale-subtitle {
+  font-size: 18px;
+  color: #f4e5ff;
+  max-width: 265px;
+  line-height: 1.4;
+}
+.finale-hd .finale-sky {
+  z-index: 2;
+  bottom: auto;
+  height: min(100svh, 780px);
+}
+.finale-hd .finale-sky:after {
+  opacity: 0.2;
+}
+.finale-hd.finale-stage-2 .finale-sky:after,
+.finale-hd.finale-stage-3 .finale-sky:after,
+.finale-hd.finale-stage-4 .finale-sky:after,
+.finale-hd.finale-stage-5 .finale-sky:after {
+  opacity: 0;
+}
+.finale-hd .finale-sky .aurora {
+  opacity: 0.12;
+  background: radial-gradient(ellipse at 50% 15%, #d2aff32b, transparent 60%);
+}
+.finale-hd .fireworks {
+  opacity: 0.5;
+  filter: none;
+}
+.finale-hd .firework {
+  top: 8%;
+  left: 10%;
+}
+.finale-hd .firework-1 {
+  left: 88%;
+  top: 15%;
+}
+.finale-hd .lantern {
+  width: 12px;
+  height: 20px;
+  box-shadow: 0 0 9px #ffca8a66;
+}
+.finale-hd .finale-confetti {
+  opacity: 0.65;
+}
+.finale-hd .finale-breath {
+  top: 22%;
+  left: 0;
+  padding: 0 25px;
+  text-shadow: 0 2px 8px #100c29;
+}
+.finale-hd .final-wish-card {
+  margin-top: -12px;
+  padding: 18px 20px;
+  background: linear-gradient(150deg, #3f2b47f5, #251e36f5);
+  border-color: #e4bad18c;
+}
+.finale-hd .final-wish-card p {
+  font-size: 17px;
+  line-height: 1.42;
+}
+.finale-hd .finale-controls {
+  margin-top: 18px;
+}
+@media (max-width: 340px) {
+  .finale-scene.finale-hd {
+    --finale-inset: 20px;
+  }
+  .finale-hd .finale-heading {
+    padding-inline: 4px;
+  }
+  .finale-hd .finale-subtitle {
+    font-size: 16px;
+  }
+  .finale-hd .final-wish-card {
+    padding: 16px;
+  }
+  .finale-hd .final-wish-card p {
+    font-size: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .finale-hd .celebration-landscape {
+    transition: none;
+  }
+}
+
