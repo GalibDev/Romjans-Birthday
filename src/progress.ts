@@ -49,17 +49,11 @@ function readProgress(): Progress {
         ]
       : [];
     const unlocked = games.length === 3;
-    let scene = Number.isInteger(raw.scene)
-      ? Math.max(0, Math.min(8, raw.scene))
-      : 0;
-    if (foundWishes.length < 5) scene = Math.min(scene, 3);
-    if (foundFlowers.length < 3) scene = Math.min(scene, 4);
     const giftUnlocked = unlocked && raw.giftUnlocked === true;
     const giftOpened = giftUnlocked && raw.giftOpened === true;
-    // Scene 08 can show its locked state; the finale requires the revealed gift.
-    if (scene === 8 && !giftOpened) scene = 7;
     return {
-      scene,
+      // Navigation belongs to this mount only; ignore legacy saved scene values.
+      scene: 0,
       wishes: foundWishes,
       flowers: foundFlowers,
       memories: strings(raw.memories),
@@ -78,7 +72,8 @@ export function useProgress() {
   const [saveError, setSaveError] = useState(false);
   useEffect(() => {
     try {
-      localStorage.setItem(storageKey, JSON.stringify(progress));
+      const { scene: _scene, ...savedAchievements } = progress;
+      localStorage.setItem(storageKey, JSON.stringify(savedAchievements));
       setSaveError(false);
     } catch {
       setSaveError(true);
