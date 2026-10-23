@@ -1,6 +1,7 @@
 import { useId, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { artwork, useArtwork } from "../artwork";
+import { birthday } from "../config";
 export function InvitationScene({ onNext }: { onNext: () => void }) {
   const [opening, setOpening] = useState(false);
   const started = useRef(false);
@@ -120,6 +121,14 @@ export function InvitationScene({ onNext }: { onNext: () => void }) {
         </div>
       )}
       <div className="invitation-caption">
+        <motion.span
+          className="birthday-date-badge"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: reduced ? 0 : 0.8, delay: reduced ? 0 : 0.6 }}
+        >
+          ✦ {birthday.date} ✦
+        </motion.span>
         {!nativeLoaded && (nativeFailed || status === "error") && (
           <button
             className="artwork-retry"

@@ -1,5 +1,6 @@
 export const birthday = {
   name: "Romjan",
+  date: "23 October",
   letter: [
     "A very special day belongs to a very special person.",
     "Today is a reminder of how amazing, kind, and irreplaceable you are.",

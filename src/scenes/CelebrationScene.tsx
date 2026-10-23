@@ -118,6 +118,7 @@ function Finale({ onReplay }: { onReplay: () => void }) {
         >
           <p>Happy Birthday,</p>
           <h1>{birthday.name}!</h1>
+          <p className="finale-birthday-date">{birthday.date}</p>
           <p className="finale-subtitle">{finalWishes.subtitle}</p>
         </motion.header>
       </div>
