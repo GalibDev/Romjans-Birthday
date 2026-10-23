@@ -27,9 +27,14 @@ function loadArtwork(
     };
     const timeout = setTimeout(() => finish(false), 15000);
     image.onload = () => {
+      // Safari may reject decode() even though a cached image is paintable.
+      if (typeof image.decode !== "function") {
+        finish(image.naturalWidth > 0);
+        return;
+      }
       void image.decode().then(
         () => finish(true),
-        () => finish(false),
+        () => finish(image.complete && image.naturalWidth > 0),
       );
     };
     image.onerror = () => finish(false);

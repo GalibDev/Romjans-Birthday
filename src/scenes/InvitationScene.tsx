@@ -5,8 +5,12 @@ export function InvitationScene({ onNext }: { onNext: () => void }) {
   const [opening, setOpening] = useState(false);
   const started = useRef(false);
   const reduced = useReducedMotion();
-  const id = useId();
+  const id = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const { status, retry } = useArtwork(artwork.invitation);
+  const [nativeLoaded, setNativeLoaded] = useState(false);
+  const [nativeFailed, setNativeFailed] = useState(false);
+  const [imageAttempt, setImageAttempt] = useState(0);
+  const ready = nativeLoaded || status === "ready";
   const envelopePath = "M146 849 L744 791 L841 1158 L237 1281 Z";
   function openInvitation() {
     if (started.current) return;
@@ -17,34 +21,39 @@ export function InvitationScene({ onNext }: { onNext: () => void }) {
     <div
       className={`invitation invitation-highres ${opening ? "opening" : ""}`}
     >
+      <motion.img
+        key={imageAttempt}
+        className="invitation-backdrop"
+        src={artwork.invitation}
+        width={941}
+        height={1672}
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
+        alt="A glowing crescent moon, hanging golden stars and a magical lavender envelope among dreamy clouds"
+        initial={false}
+        animate={{
+          opacity: ready ? (opening ? 0.12 : 1) : 0,
+          scale: opening && !reduced ? 1.025 : 1,
+        }}
+        transition={{ duration: opening ? 1.5 : reduced ? 0 : 0.25 }}
+        onLoad={() => {
+          setNativeLoaded(true);
+          setNativeFailed(false);
+        }}
+        onError={() => setNativeFailed(true)}
+      />
       <svg
         className="invitation-art"
         viewBox="0 0 941 1672"
         preserveAspectRatio="xMidYMid slice"
-        data-ready={status === "ready"}
+        data-ready={ready}
       >
         <defs>
-          <image
-            id={`${id}-art`}
-            href={status === "ready" ? artwork.invitation : undefined}
-            width="941"
-            height="1672"
-          />
           <clipPath id={`${id}-envelope`}>
             <path d={envelopePath} />
           </clipPath>
-          <mask id={`${id}-sky`}>
-            <rect width="941" height="1672" fill="white" />
-            <path d={envelopePath} fill="black" />
-          </mask>
         </defs>
-        <path
-          d={envelopePath}
-          fill="#5e4464"
-          opacity={opening ? 0.3 : 0}
-          aria-hidden="true"
-        />
-        <use href={`#${id}-art`} mask={`url(#${id}-sky)`} aria-hidden="true" />
         <motion.g
           role="button"
           tabIndex={opening ? -1 : 0}
@@ -63,22 +72,28 @@ export function InvitationScene({ onNext }: { onNext: () => void }) {
           }}
           animate={
             opening
-              ? { y: reduced ? 0 : -55, scale: reduced ? 1 : 1.08, opacity: 0 }
-              : reduced
-                ? { y: 0 }
-                : { y: [0, -8, 0] }
+              ? {
+                  y: reduced ? 0 : [0, -15, -55],
+                  scale: reduced ? 1 : [1, 1.03, 1.08],
+                  opacity: [1, 1, 0],
+                }
+              : { y: 0, scale: 1, opacity: 0 }
           }
           transition={
-            opening
-              ? { duration: reduced ? 0.3 : 1.5 }
-              : { duration: 5, repeat: Infinity, ease: "easeInOut" }
+            opening ? { duration: reduced ? 0.3 : 1.5 } : { duration: 0 }
           }
           onAnimationComplete={() => {
             if (opening) onNext();
           }}
           style={{ transformOrigin: "490px 1035px" }}
         >
-          <use href={`#${id}-art`} clipPath={`url(#${id}-envelope)`} />
+          <image
+            href={artwork.invitation}
+            xlinkHref={artwork.invitation}
+            width="941"
+            height="1672"
+            clipPath={`url(#${id}-envelope)`}
+          />
         </motion.g>
       </svg>
       <h1>
@@ -105,8 +120,15 @@ export function InvitationScene({ onNext }: { onNext: () => void }) {
         </div>
       )}
       <div className="invitation-caption">
-        {status === "error" && (
-          <button className="artwork-retry" onClick={retry}>
+        {!nativeLoaded && (nativeFailed || status === "error") && (
+          <button
+            className="artwork-retry"
+            onClick={() => {
+              setNativeFailed(false);
+              setImageAttempt((n) => n + 1);
+              retry();
+            }}
+          >
             Artwork unavailable · Retry image
           </button>
         )}
