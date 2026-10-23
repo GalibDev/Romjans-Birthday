@@ -22,7 +22,10 @@ export function DreamPortalScene({ onNext }: { onNext: () => void }) {
         }}
       >
         <img
-          src="/art/portal.png"
+          src="/art/moonlit-portal-floating-kingdom.png"
+          width={941}
+          height={1672}
+          decoding="async"
           alt="A male traveler gazes into a glowing lavender portal, with a moonlit castle floating beyond"
         />
         <div className="portal-ring" />
