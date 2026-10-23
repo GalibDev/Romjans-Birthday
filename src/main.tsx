@@ -1,15 +1,44 @@
 import React, { useState, useRef, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { AnimatePresence, motion, MotionConfig } from "motion/react";
-import { ArrowLeft, ArrowRight, Music2, VolumeX, Sparkles } from "lucide-react";
+import { ArrowLeft, Music2, VolumeX } from "lucide-react";
 import { InvitationScene } from "./scenes/InvitationScene";
 import { BirthdayLetterScene } from "./scenes/BirthdayLetterScene";
 import { DreamPortalScene } from "./scenes/DreamPortalScene";
 import { StarField } from "./components/StarField";
+import { ConstellationScene } from "./scenes/ConstellationScene";
+import { GardenScene } from "./scenes/GardenScene";
+import { MemoryScene } from "./scenes/MemoryScene";
+import { ChallengeScene } from "./scenes/ChallengeScene";
+import { GiftEntryScene } from "./scenes/GiftEntryScene";
+import { useProgress, type GameId } from "./progress";
 import "./style.css";
+import "./worlds.css";
 
 function App() {
-  const [scene, setScene] = useState(0);
+  const { progress, setProgress, saveError } = useProgress();
+  const scene = progress.scene;
+  const setScene = (next: number) =>
+    setProgress((p) => ({ ...p, scene: Math.max(0, Math.min(7, next)) }));
+  const advance = (from: number) =>
+    setProgress((p) => (p.scene === from ? { ...p, scene: from + 1 } : p));
+  const discoverWish = (id: string) =>
+    setProgress((p) =>
+      p.wishes.includes(id) ? p : { ...p, wishes: [...p.wishes, id] },
+    );
+  const discoverFlower = (id: number) =>
+    setProgress((p) =>
+      p.flowers.includes(id) ? p : { ...p, flowers: [...p.flowers, id] },
+    );
+  const visitMemory = (id: string) =>
+    setProgress((p) =>
+      p.memories.includes(id) ? p : { ...p, memories: [...p.memories, id] },
+    );
+  const completeGame = (id: GameId) =>
+    setProgress((p) => {
+      const games = p.games.includes(id) ? p.games : [...p.games, id];
+      return { ...p, games, magicKey: games.length === 3 };
+    });
   const [music, setMusic] = useState(false);
   const audio = useRef<AudioContext | null>(null);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -90,40 +119,57 @@ function App() {
               transition={{ duration: 0.8 }}
             >
               {scene === 0 ? (
-                <InvitationScene onNext={() => setScene(1)} />
+                <InvitationScene onNext={() => advance(0)} />
               ) : scene === 1 ? (
-                <BirthdayLetterScene onNext={() => setScene(2)} />
+                <BirthdayLetterScene onNext={() => advance(1)} />
               ) : scene === 2 ? (
-                <DreamPortalScene onNext={() => setScene(3)} />
+                <DreamPortalScene onNext={() => advance(2)} />
+              ) : scene === 3 ? (
+                <ConstellationScene
+                  discovered={progress.wishes}
+                  discover={discoverWish}
+                  onNext={() => advance(3)}
+                />
+              ) : scene === 4 ? (
+                <GardenScene
+                  viewed={progress.flowers}
+                  secret={progress.butterfly}
+                  discover={discoverFlower}
+                  revealSecret={() =>
+                    setProgress((p) => ({ ...p, butterfly: true }))
+                  }
+                  onNext={() => advance(4)}
+                />
+              ) : scene === 5 ? (
+                <MemoryScene
+                  visited={progress.memories}
+                  visit={visitMemory}
+                  onNext={() => advance(5)}
+                />
+              ) : scene === 6 ? (
+                <ChallengeScene
+                  completed={progress.games}
+                  magicKey={progress.magicKey}
+                  complete={completeGame}
+                  onNext={() => advance(6)}
+                />
               ) : (
-                <div className="continuation">
-                  <Sparkles size={36} />
-                  <p className="eyebrow">THIS IS ONLY THE BEGINNING</p>
-                  <h1>
-                    The Journey
-                    <br />
-                    <em>Continues</em>
-                  </h1>
-                  <p>
-                    More dreams. More memories.
-                    <br />A little more magic, just for you.
-                  </p>
-                  <button className="magic-button" onClick={() => setScene(0)}>
-                    Relive the magic <ArrowRight size={16} />
-                  </button>
-                </div>
+                <GiftEntryScene />
               )}
             </motion.div>
           </AnimatePresence>
         </div>
-        <footer
-          className="progress"
-          aria-label={`Scene ${Math.min(scene + 1, 3)} of 3`}
-        >
-          {[0, 1, 2].map((i) => (
+        <footer className="progress" aria-label={`Scene ${scene + 1} of 8`}>
+          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
             <span key={i} className={i === scene ? "active" : ""} />
           ))}
         </footer>
+        {saveError && (
+          <p className="save-notice" role="status">
+            Progress stays here while this tab is open. Browser storage is
+            unavailable.
+          </p>
+        )}
       </main>
     </MotionConfig>
   );
