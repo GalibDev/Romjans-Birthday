@@ -1,7 +1,13 @@
 import { motion } from "motion/react";
+import { useEffect } from "react";
+import { warmPortalArtwork } from "../artwork";
 import { birthday } from "../config";
 import { MagicalButton } from "../components/MagicalButton";
 export function BirthdayLetterScene({ onNext }: { onNext: () => void }) {
+  useEffect(() => {
+    const timer = setTimeout(warmPortalArtwork, 600);
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <div className="letter-scene">
       <div className="letter-halo" />

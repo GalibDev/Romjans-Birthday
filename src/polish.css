@@ -979,3 +979,34 @@ body {
     margin-bottom: 2px;
   }
 }
+
+/* Reveal only complete decoded artwork; keep existing scene geometry and controls. */
+.invitation-highres {
+  background: radial-gradient(ellipse at 50% 65%, #35244388, transparent 70%);
+}
+.invitation-art[data-ready],
+.portal-world .decoded-portal-art {
+  opacity: 0;
+  transition: opacity 0.4s ease-out;
+}
+.invitation-art[data-ready="true"],
+.portal-world .decoded-portal-art[data-ready="true"] {
+  opacity: 1;
+}
+.artwork-retry {
+  display: block;
+  margin: 0 auto 8px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #dcb8d46b;
+  border-radius: 16px;
+  background: #191429c9;
+  color: #f5dce7;
+  font-size: 15px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .invitation-art[data-ready],
+  .portal-world .decoded-portal-art {
+    transition: none;
+  }
+}

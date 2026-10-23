@@ -1,10 +1,12 @@
 import { useId, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
+import { artwork, useArtwork } from "../artwork";
 export function InvitationScene({ onNext }: { onNext: () => void }) {
   const [opening, setOpening] = useState(false);
   const started = useRef(false);
   const reduced = useReducedMotion();
   const id = useId();
+  const { status, retry } = useArtwork(artwork.invitation);
   const envelopePath = "M146 849 L744 791 L841 1158 L237 1281 Z";
   function openInvitation() {
     if (started.current) return;
@@ -19,8 +21,15 @@ export function InvitationScene({ onNext }: { onNext: () => void }) {
         className="invitation-art"
         viewBox="0 0 941 1672"
         preserveAspectRatio="xMidYMid slice"
+        data-ready={status === "ready"}
       >
         <defs>
+          <image
+            id={`${id}-art`}
+            href={status === "ready" ? artwork.invitation : undefined}
+            width="941"
+            height="1672"
+          />
           <clipPath id={`${id}-envelope`}>
             <path d={envelopePath} />
           </clipPath>
@@ -28,25 +37,14 @@ export function InvitationScene({ onNext }: { onNext: () => void }) {
             <rect width="941" height="1672" fill="white" />
             <path d={envelopePath} fill="black" />
           </mask>
-          <radialGradient id={`${id}-light`}>
-            <stop stopColor="#edc0dd" />
-            <stop offset="1" stopColor="#45385d" />
-          </radialGradient>
         </defs>
-        <ellipse
-          cx="490"
-          cy="1040"
-          rx="380"
-          ry="270"
-          fill={`url(#${id}-light)`}
-        />
-        <image
-          href="/art/invitation-high-resolution.png"
-          width="941"
-          height="1672"
-          mask={`url(#${id}-sky)`}
+        <path
+          d={envelopePath}
+          fill="#5e4464"
+          opacity={opening ? 0.3 : 0}
           aria-hidden="true"
         />
+        <use href={`#${id}-art`} mask={`url(#${id}-sky)`} aria-hidden="true" />
         <motion.g
           role="button"
           tabIndex={opening ? -1 : 0}
@@ -80,12 +78,7 @@ export function InvitationScene({ onNext }: { onNext: () => void }) {
           }}
           style={{ transformOrigin: "490px 1035px" }}
         >
-          <image
-            href="/art/invitation-high-resolution.png"
-            width="941"
-            height="1672"
-            clipPath={`url(#${id}-envelope)`}
-          />
+          <use href={`#${id}-art`} clipPath={`url(#${id}-envelope)`} />
         </motion.g>
       </svg>
       <h1>
@@ -112,6 +105,11 @@ export function InvitationScene({ onNext }: { onNext: () => void }) {
         </div>
       )}
       <div className="invitation-caption">
+        {status === "error" && (
+          <button className="artwork-retry" onClick={retry}>
+            Artwork unavailable · Retry image
+          </button>
+        )}
         <span className="touch-spark">✧</span>
         <button
           className="invitation-open-prompt"
