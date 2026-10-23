@@ -20,12 +20,16 @@ export const birthday = {
 
 export type PersonalMedia = {
   photo?: string;
+  photoPosition?: string;
   voice?: string;
   video?: string;
   ambientMusic?: string;
 };
 // Set local /media/... paths here when personal media is available.
-export const personalMedia: PersonalMedia = {};
+export const personalMedia: PersonalMedia = {
+  photo: "/images/romjan/romjan-07.jpg",
+  photoPosition: "50% 25%",
+};
 export const giftMessage = {
   greeting: `Dear ${birthday.name},`,
   paragraphs: [
@@ -92,26 +96,67 @@ export type Memory = {
   caption: string;
   date?: string;
   description?: string;
+  imagePosition?: string;
+  imageFit?: "cover" | "contain";
 };
-// Add image: '/images/memories/your-photo.jpg' to any entry when photos are ready.
+// Keep photos in filename order. Landscape group photos retain the entire frame.
 export const memories: Memory[] = [
   {
     id: "ordinary-days",
+    image: "/images/romjan/romjan-01.jpg",
+    imagePosition: "50% 30%",
     caption: "The ordinary days that became our favourite memories.",
-    description:
-      "A place for a photo of one of our little everyday adventures.",
+    description: "A little pause, a familiar smile, a moment worth keeping.",
   },
   {
     id: "shared-laughter",
-    caption: "The kind of laughter we will remember forever.",
-    description: "A place for a photo of a moment that still makes us smile.",
+    image: "/images/romjan/romjan-02.jpg",
+    imagePosition: "50% 20%",
+    caption: "Taking life one good moment at a time.",
+    description: "Here is to peaceful pauses and all the possibilities ahead.",
   },
   {
     id: "next-adventure",
-    caption: "Here is to all the memories we have yet to make.",
-    description: "A place for a photo from our next beautiful adventure.",
+    image: "/images/romjan/romjan-03.jpg",
+    imageFit: "contain",
+    caption: "Good company makes the best memories.",
+    description:
+      "Some pictures are better simply because we are in them together.",
+  },
+  {
+    id: "little-possibilities",
+    image: "/images/romjan/romjan-04.jpg",
+    imagePosition: "50% 20%",
+    caption: "A little sunshine, a world of possibilities.",
+    description: "May the next chapter bring even more reasons to smile.",
+  },
+  {
+    id: "friendship-moments",
+    image: "/images/romjan/romjan-05.jpg",
+    imagePosition: "50% 15%",
+    caption: "The little moments that friendship makes special.",
+    description: "Here is to the familiar faces that brighten ordinary days.",
+  },
+  {
+    id: "better-together",
+    image: "/images/romjan/romjan-06.jpg",
+    imageFit: "contain",
+    caption: "More smiles, more stories, more memories together.",
+    description: "A shared frame, and another little moment to keep.",
+  },
+  {
+    id: "keep-shining",
+    image: "/images/romjan/romjan-07.jpg",
+    imagePosition: "50% 25%",
+    caption: "Keep dreaming. Keep smiling. Keep being you.",
+    description: "The best adventures are still waiting for you, Romjan.",
   },
 ];
+export const puzzlePhoto = {
+  image: "/images/romjan/romjan-01.jpg",
+  position: "50% 35%",
+  alt: "Romjan standing beneath the trees",
+};
 export const quiz = [
   {
     question: "What makes a birthday truly special?",

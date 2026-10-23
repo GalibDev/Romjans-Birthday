@@ -13,6 +13,8 @@ export function PersonalMedia() {
           src={personalMedia.photo}
           alt={`A birthday memory with ${birthday.name}`}
           loading="lazy"
+          decoding="async"
+          style={{ objectPosition: personalMedia.photoPosition ?? "50% 25%" }}
           onError={() => setFailed((s) => ({ ...s, photo: true }))}
         />
       )}

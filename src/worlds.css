@@ -402,7 +402,7 @@
   position: relative;
   width: 100%;
   max-width: 310px;
-  aspect-ratio: 0.86;
+  padding: 12px 0 16px;
   display: grid;
   place-items: center;
   margin-top: 30px;
@@ -411,10 +411,15 @@
 .polaroid {
   position: relative;
   width: 85%;
-  background: linear-gradient(130deg, #fff1df, #e4c5cc);
-  padding: 12px 12px 17px;
+  background: linear-gradient(135deg, #fff9ed, #f0dce0 75%, #e1bfce);
+  padding: 12px 12px 21px;
+  border: 1px solid #fff0e0;
+  border-radius: 3px;
   color: #4d324b;
-  box-shadow: 0 0 25px #f5c2e15e;
+  box-shadow:
+    0 14px 30px #09091b66,
+    0 0 25px #f5c2e15e,
+    inset 0 0 0 1px #fff8ef80;
   touch-action: pan-y;
   cursor: grab;
 }
@@ -440,13 +445,15 @@
   width: 100%;
   padding: 0;
   border: 0;
-  background: #79607b;
+  background: #292333;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px #53394730;
 }
 .memory-placeholder,
 .memory-photo {
   display: flex;
   width: 100%;
-  aspect-ratio: 1/1.06;
+  aspect-ratio: 4/5;
   object-fit: cover;
 }
 .memory-placeholder {
@@ -479,8 +486,27 @@
   font-style: italic;
   font-size: 19px;
   line-height: 1.2;
-  margin: 14px 4px 0;
+  margin: 6px 4px 0;
+  min-height: 3.6em;
   text-align: left;
+}
+.polaroid-inscription {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 4px 0;
+  color: #855d78;
+  font-size: 15px;
+}
+.polaroid-number {
+  font:
+    9px Arial,
+    sans-serif;
+  letter-spacing: 2px;
+}
+.photo-open img {
+  user-select: none;
+  -webkit-user-drag: none;
 }
 .polaroid time {
   font-size: 13px;
@@ -519,6 +545,11 @@
   min-height: 230px;
   max-height: 55svh;
   object-fit: contain;
+}
+.photo-dialog .memory-photo {
+  height: auto;
+  min-height: 0;
+  background: #292333;
 }
 .photo-dialog h2 {
   font-size: 25px;
@@ -816,6 +847,19 @@
 .puzzle-preview img {
   width: 100%;
   border-radius: 12px;
+}
+.puzzle-photo-tile {
+  position: absolute;
+  width: 300%;
+  height: 300%;
+  max-width: none;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+.puzzle-preview .puzzle-photo-preview {
+  aspect-ratio: 1;
+  object-fit: cover;
 }
 .quiz-question {
   font-size: 24px;

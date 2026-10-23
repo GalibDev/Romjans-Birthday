@@ -9,7 +9,7 @@ import {
   KeyRound,
   Sparkles,
 } from "lucide-react";
-import { birthday, quiz } from "../config";
+import { birthday, quiz, puzzlePhoto } from "../config";
 import type { GameId } from "../progress";
 import { WorldHeading } from "../components/WorldHeading";
 import { MagicalButton } from "../components/MagicalButton";
@@ -150,14 +150,22 @@ function PicturePuzzle({ onComplete }: { onComplete: () => void }) {
             key={index}
             disabled={solved}
             className={`puzzle-tile ${selected === index ? "selected" : ""} ${tile === index ? "in-place" : ""}`}
-            style={{
-              backgroundImage: "url(/art/puzzle-world.svg)",
-              backgroundPosition: `${(tile % 3) * 50}% ${Math.floor(tile / 3) * 50}%`,
-            }}
             aria-label={`Position ${index + 1}, tile ${tile + 1}${tile === index ? ", correct" : ""}`}
             aria-pressed={selected === index}
             onClick={() => tap(index)}
           >
+            <img
+              className="puzzle-photo-tile"
+              src={puzzlePhoto.image}
+              alt=""
+              draggable={false}
+              decoding="async"
+              style={{
+                left: `${-(tile % 3) * 100}%`,
+                top: `${-Math.floor(tile / 3) * 100}%`,
+                objectPosition: puzzlePhoto.position,
+              }}
+            />
             <span>{tile + 1}</span>
           </button>
         ))}
@@ -188,8 +196,10 @@ function PicturePuzzle({ onComplete }: { onComplete: () => void }) {
           <details className="puzzle-preview">
             <summary>Peek at the complete picture</summary>
             <img
-              src="/art/puzzle-world.svg"
-              alt="A lavender crescent moon over a magical castle and lake"
+              src={puzzlePhoto.image}
+              alt={puzzlePhoto.alt}
+              className="puzzle-photo-preview"
+              style={{ objectPosition: puzzlePhoto.position }}
             />
           </details>
         </>

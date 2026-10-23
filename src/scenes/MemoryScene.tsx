@@ -1,17 +1,29 @@
-import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ChevronLeft, ChevronRight, ImagePlus, Expand } from "lucide-react";
 import { memories, type Memory } from "../config";
 import { WorldHeading } from "../components/WorldHeading";
 import { MagicalButton } from "../components/MagicalButton";
 import { MagicDialog } from "../components/MagicDialog";
-function MemoryPhoto({ memory }: { memory: Memory }) {
+function MemoryPhoto({
+  memory,
+  full = false,
+}: {
+  memory: Memory;
+  full?: boolean;
+}) {
   const [failed, setFailed] = useState(false);
   return memory.image && !failed ? (
     <img
       className="memory-photo"
       src={memory.image}
       alt={memory.caption}
+      draggable={false}
+      decoding="async"
+      style={{
+        objectPosition: memory.imagePosition ?? "50% 30%",
+        objectFit: full ? "contain" : (memory.imageFit ?? "cover"),
+      }}
       onError={() => setFailed(true)}
     />
   ) : (
@@ -34,8 +46,23 @@ export function MemoryScene({
   const [index, setIndex] = useState(0);
   const [enlarged, setEnlarged] = useState(false);
   const [closing, setClosing] = useState(false);
+  const [direction, setDirection] = useState(1);
+  const reduced = useReducedMotion();
+  const dragged = useRef(false);
+  const transitioning = useRef(false);
   const memory = memories[index];
+  useEffect(() => {
+    const next = new Image();
+    next.src = memories[(index + 1) % memories.length].image ?? "";
+    return () => {
+      next.onload = null;
+      next.onerror = null;
+    };
+  }, [index]);
   function move(delta: number) {
+    if (transitioning.current) return;
+    transitioning.current = true;
+    setDirection(delta);
     setIndex((index + delta + memories.length) % memories.length);
     visit(memory.id);
     visit(memories[(index + delta + memories.length) % memories.length].id);
@@ -57,26 +84,57 @@ export function MemoryScene({
       <div className="memory-stage">
         <span className="polaroid-ghost ghost-left" />
         <span className="polaroid-ghost ghost-right" />
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             className="polaroid"
             key={memory.id}
-            initial={{ opacity: 0, x: 30, rotate: 3 }}
-            animate={{ opacity: 1, x: 0, rotate: -3 }}
-            exit={{ opacity: 0, x: -30, rotate: -5 }}
-            transition={{ duration: 0.35 }}
+            custom={direction}
+            variants={{
+              enter: (dir: number) => ({
+                opacity: 0,
+                x: reduced ? 0 : dir * 40,
+                rotate: reduced ? 0 : dir * 3,
+              }),
+              visible: { opacity: 1, x: 0, rotate: reduced ? 0 : -3 },
+              leave: (dir: number) => ({
+                opacity: 0,
+                x: reduced ? 0 : -dir * 40,
+                rotate: reduced ? 0 : -dir * 5,
+              }),
+            }}
+            initial="enter"
+            animate="visible"
+            exit="leave"
+            transition={{
+              duration: reduced ? 0.12 : 0.3,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            onAnimationComplete={(definition) => {
+              if (definition === "visible") transitioning.current = false;
+            }}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.35}
+            dragMomentum={false}
+            onDragStart={() => {
+              dragged.current = true;
+            }}
             onDragEnd={(_, info) => {
-              if (info.offset.x > 45) move(-1);
-              else if (info.offset.x < -45) move(1);
+              if (info.offset.x > 40 || info.velocity.x > 450) move(-1);
+              else if (info.offset.x < -40 || info.velocity.x < -450) move(1);
             }}
           >
             <button
               className="photo-open"
               aria-label={`Enlarge memory: ${memory.caption}`}
+              onPointerDown={() => {
+                dragged.current = false;
+              }}
               onClick={() => {
+                if (dragged.current) {
+                  dragged.current = false;
+                  return;
+                }
                 visit(memory.id);
                 setEnlarged(true);
               }}
@@ -84,6 +142,13 @@ export function MemoryScene({
               <MemoryPhoto memory={memory} />
               <Expand className="expand-icon" size={18} />
             </button>
+            <div className="polaroid-inscription">
+              <span className="polaroid-number">
+                {String(index + 1).padStart(2, "0")} /{" "}
+                {String(memories.length).padStart(2, "0")}
+              </span>
+              <span aria-hidden="true">✧</span>
+            </div>
             <p className="memory-caption">{memory.caption}</p>
             {memory.date && <time>{memory.date}</time>}
           </motion.div>
@@ -126,7 +191,7 @@ export function MemoryScene({
           className="photo-dialog"
           onClose={() => setEnlarged(false)}
         >
-          <MemoryPhoto memory={memory} />
+          <MemoryPhoto memory={memory} full />
           <h2>{memory.caption}</h2>
           {memory.date && <p>{memory.date}</p>}
           <p>{memory.description}</p>

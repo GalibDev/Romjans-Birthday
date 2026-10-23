@@ -341,6 +341,14 @@
   width: 100%;
   max-width: 100%;
 }
+.personal-media img {
+  aspect-ratio: 3/4;
+  max-height: none;
+  object-fit: cover;
+  box-shadow:
+    0 0 0 6px #fff0e51a,
+    0 10px 24px #0d0a2340;
+}
 .personal-media > div {
   margin: 20px 0;
 }
