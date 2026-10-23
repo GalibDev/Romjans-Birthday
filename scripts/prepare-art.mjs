@@ -13,6 +13,10 @@ const crops = [
   ["05", "garden-flower", 116, 418, 111, 69],
   ["06", "memory-clouds", 3, 70, 43, 140],
   ["07", "challenge-clouds", 4, 423, 230, 105],
+  ["08", "gift-lid", 9, 174, 221, 110],
+  ["08", "gift-base", 9, 284, 221, 120],
+  ["08", "gift-platform", 9, 403, 221, 55],
+  ["09", "celebration-world", 3, 239, 230, 195],
 ];
 for (const [scene, name, left, top, width, height] of crops) {
   await sharp(`romjan_scene_${scene}.png`)

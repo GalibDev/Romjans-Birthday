@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { motion } from "motion/react";
+import { MusicControl } from "../audio";
 export function MagicDialog({
   title,
   children,
@@ -31,6 +32,7 @@ export function MagicDialog({
         if (e.target === e.currentTarget) onClose();
       }}
     >
+      <MusicControl className="dialog-audio" />
       <button
         className="icon-button dialog-close"
         onClick={onClose}

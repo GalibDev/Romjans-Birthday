@@ -1,0 +1,831 @@
+.controls {
+  position: fixed;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  width: min(386px, calc(100% - 44px));
+  pointer-events: none;
+}
+.controls > * {
+  pointer-events: auto;
+}
+.icon-button {
+  width: 44px;
+  height: 44px;
+}
+.dialog-audio {
+  position: absolute;
+  top: 13px;
+  left: 13px;
+  z-index: 2;
+}
+.dialog-close {
+  width: 44px;
+  height: 44px;
+}
+.magic-dialog {
+  padding-top: 68px;
+}
+.page-hidden *,
+.page-hidden *:before,
+.page-hidden *:after {
+  animation-play-state: paused !important;
+}
+.world-scene {
+  padding-bottom: max(65px, calc(env(safe-area-inset-bottom) + 40px));
+}
+.progress {
+  bottom: max(20px, env(safe-area-inset-bottom));
+}
+.gift-scene {
+  background: radial-gradient(ellipse at 50% 55%, #6f36705e, transparent 65%);
+}
+.gift-landscape {
+  position: absolute;
+  inset: 28% 0 auto;
+  width: 100%;
+  height: 48%;
+  object-fit: cover;
+  mask-image: linear-gradient(transparent, #000 30%, transparent 95%);
+  opacity: 0.55;
+  z-index: -1;
+}
+.gift-theatre {
+  position: relative;
+  isolation: isolate;
+  z-index: 6;
+  width: 100%;
+  height: clamp(285px, 45svh, 410px);
+  margin: 24px 0 0;
+  transition: height 1.8s ease-in-out;
+}
+.gift-box {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 92%;
+  max-width: 330px;
+  aspect-ratio: 221/230;
+  filter: drop-shadow(0 0 18px #edb2e47a);
+  transition:
+    filter 1.2s,
+    transform 1.8s,
+    opacity 1.8s;
+  transform-origin: 50% 0;
+}
+.gift-lid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  z-index: 3;
+  mask-image: linear-gradient(transparent, #000 9%, #000);
+}
+.gift-base {
+  position: absolute;
+  left: 0;
+  top: 47.8%;
+  width: 100%;
+  height: auto;
+  z-index: 2;
+}
+.gift-platform {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 23%;
+  object-fit: cover;
+  mask-image: radial-gradient(ellipse, #000 30%, transparent 75%);
+  z-index: 1;
+  transition: opacity 1.8s;
+}
+.gift-lock {
+  position: absolute;
+  left: 67%;
+  top: 55%;
+  z-index: 5;
+  width: 53px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(ellipse, #fff0c975, #c691449c);
+  border: 1px solid #ffe4a9;
+  border-radius: 50% 50% 42% 42%;
+  color: #fff2c9;
+  box-shadow:
+    0 0 16px #ffd891,
+    inset 0 0 9px #ffeac0;
+  transition:
+    filter 0.4s,
+    box-shadow 0.4s,
+    opacity 1.2s;
+}
+.gift-lock:disabled {
+  opacity: 1;
+}
+.gift-lock.lock-target {
+  box-shadow:
+    0 0 35px #fff0a2,
+    inset 0 0 15px #fff1ba;
+  filter: brightness(1.3);
+}
+.gift-action {
+  position: relative;
+  z-index: 7;
+  text-align: center;
+  margin: 10px 0 5px;
+  width: 100%;
+}
+.gift-action > p {
+  font-size: 21px;
+  margin: 12px 0;
+  color: #f3d7e4;
+}
+.gift-action .gentle-hint {
+  font-size: 15px;
+  margin: 15px 0;
+}
+.draggable-key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  margin: 15px auto 0;
+  padding: 9px 25px;
+  min-height: 65px;
+  width: min(100%, 280px);
+  border: 1px solid #d9b9df;
+  border-radius: 99px;
+  color: #ffdb98;
+  background: linear-gradient(115deg, #593a66dd, #392441da);
+  box-shadow: 0 0 25px #eac2ef35;
+  touch-action: none;
+  cursor: grab;
+}
+.draggable-key > svg {
+  filter: drop-shadow(0 0 8px #ffd38b);
+  flex-shrink: 0;
+}
+.draggable-key span {
+  font-size: 21px;
+  color: #ffe0d9;
+}
+.draggable-key > span > span {
+  margin-left: 6px;
+}
+.gift-darkness {
+  position: absolute;
+  inset: -300px -50px -100px;
+  z-index: -1;
+  pointer-events: none;
+  background: #060615;
+  opacity: 0;
+  transition: opacity 1.5s;
+}
+.gift-opening .gift-darkness {
+  opacity: 0.4;
+}
+.gift-opening .gift-box {
+  filter: drop-shadow(0 0 30px #ffe0b1a6);
+}
+.gift-beam {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 13%;
+  height: 105%;
+  background: linear-gradient(0deg, #ffdebcb3, #edc0fa38, transparent);
+  clip-path: polygon(0 0, 100% 0, 65% 100%, 35% 100%);
+  filter: blur(10px);
+  opacity: 0;
+  transition: opacity 1.5s;
+  z-index: 4;
+  pointer-events: none;
+}
+.gift-stage-3 .gift-beam,
+.gift-stage-4 .gift-beam {
+  opacity: 1;
+}
+.gift-ribbon {
+  position: absolute;
+  left: 48%;
+  top: 18%;
+  width: 8%;
+  height: 65%;
+  z-index: 4;
+  pointer-events: none;
+}
+.gift-ribbon:before,
+.gift-ribbon:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 80px;
+  height: 38px;
+  border: 2px solid #ffdc92;
+  border-radius: 90% 10% 90% 10%;
+  box-shadow: 0 0 10px #ffd9a8;
+  opacity: 0;
+  transform-origin: left bottom;
+}
+.gift-ribbon:after {
+  transform: rotateY(180deg);
+  right: 50%;
+}
+.gift-stage-2 .gift-ribbon:before,
+.gift-stage-2 .gift-ribbon:after {
+  animation: untieRibbon 1.2s ease-out both;
+}
+.gift-sparks {
+  position: absolute;
+  left: 50%;
+  top: 65%;
+  z-index: 8;
+  pointer-events: none;
+}
+.gift-sparks i {
+  position: absolute;
+  color: #ffe2ac;
+  text-shadow: 0 0 9px #ffd482;
+  font-style: normal;
+}
+.gift-sparks i:nth-child(3n) {
+  color: #e9b2ff;
+}
+.key-entering {
+  position: absolute;
+  top: 48%;
+  left: 66%;
+  z-index: 10;
+  color: #ffe4aa;
+  filter: drop-shadow(0 0 12px #ffdc8a);
+  pointer-events: none;
+}
+.gift-stage-5 .gift-theatre {
+  height: 175px;
+}
+.gift-stage-5 .gift-box {
+  transform: translateX(-50%) scale(0.55);
+  opacity: 0.6;
+}
+.gift-stage-5 .gift-lock,
+.gift-stage-5 .gift-platform {
+  opacity: 0;
+}
+.gift-message {
+  position: relative;
+  z-index: 7;
+  width: 100%;
+  border: 1px solid #e3bdc995;
+  border-radius: 24px;
+  padding: 27px 24px 30px;
+  text-align: center;
+  background: radial-gradient(ellipse at 50% 0, #80576cbd, #31223fe8 70%);
+  box-shadow: 0 0 35px #e6a9d523;
+  outline: none;
+  margin: 0 0 15px;
+  scroll-margin-top: 80px;
+}
+.gift-message > svg {
+  color: #f8d4aa;
+  margin: 0 auto 18px;
+}
+.gift-message p {
+  font-size: 20px;
+  line-height: 1.55;
+  color: #f3dee5;
+  margin: 0 0 18px;
+}
+.gift-message .gift-greeting {
+  font-size: 28px;
+  font-style: italic;
+  color: #ffe4c9;
+  text-align: left;
+}
+.gift-message h2 {
+  font-size: 31px;
+  font-family: "Great Vibes", cursive;
+  font-weight: 400;
+  color: #ffdec3;
+  margin: 25px 0 15px;
+  line-height: 1.3;
+}
+.gift-message .gift-signoff {
+  font-style: italic;
+  color: #edc4dc;
+}
+.gift-message .magic-button {
+  font-size: 17px;
+  padding: 14px 16px;
+  gap: 10px;
+  margin-top: 13px;
+  max-width: 100%;
+}
+.personal-media:empty {
+  display: none;
+}
+.personal-media img,
+.personal-media video {
+  display: block;
+  width: 100%;
+  max-height: 350px;
+  object-fit: contain;
+  border-radius: 14px;
+  border: 1px solid #cda7d57d;
+  margin: 18px 0;
+}
+.personal-media audio {
+  width: 100%;
+  max-width: 100%;
+}
+.personal-media > div {
+  margin: 20px 0;
+}
+.personal-media > div > p {
+  font-size: 17px;
+}
+.unlock-whisper {
+  font-style: italic;
+  min-height: 70px;
+  display: grid;
+  place-items: center;
+}
+.finale-scene {
+  padding-top: 105px;
+  background: #10122b;
+  min-height: 100svh;
+  overflow: hidden;
+}
+.finale-sky {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+.finale-sky:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #070817;
+  opacity: 0.6;
+  transition: opacity 2s;
+}
+.finale-stage-2 .finale-sky:after,
+.finale-stage-3 .finale-sky:after,
+.finale-stage-4 .finale-sky:after,
+.finale-stage-5 .finale-sky:after {
+  opacity: 0;
+}
+.aurora {
+  position: absolute;
+  top: 0;
+  left: -20%;
+  width: 140%;
+  height: 70%;
+  background:
+    radial-gradient(ellipse at 30% 25%, #d2aff33b, transparent 48%),
+    conic-gradient(
+      from 160deg at 50% 10%,
+      transparent 0deg,
+      #7c4e8f66 30deg,
+      #b98bd933 65deg,
+      transparent 110deg
+    );
+  filter: blur(18px);
+  opacity: 0.25;
+  transition: opacity 3s;
+}
+.finale-stage-2 .aurora,
+.finale-stage-3 .aurora,
+.finale-stage-4 .aurora,
+.finale-stage-5 .aurora {
+  opacity: 1;
+}
+.finale-moon {
+  position: absolute;
+  left: 50%;
+  top: 60px;
+  width: 170px;
+  height: 170px;
+  transform: translateX(-50%) rotate(-20deg);
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #f6dfd994, #ad94b69c);
+  box-shadow: 0 0 35px #dac1ed4a;
+  mask-image: radial-gradient(circle at 72% 35%, transparent 51%, #000 52%);
+  opacity: 0.8;
+}
+.finale-heading {
+  position: relative;
+  z-index: 6;
+  text-align: center;
+  width: 100%;
+  min-height: 172px;
+  text-shadow: 0 0 18px #ffbbd57a;
+}
+.finale-heading > p:first-child {
+  font-size: 33px;
+  font-style: italic;
+  color: #ffe3d2;
+  margin: 0;
+}
+.finale-heading h1 {
+  font-family: "Great Vibes", cursive;
+  font-size: 74px;
+  font-weight: 400;
+  line-height: 1.15;
+  color: #ffddcb;
+  margin: 0 0 13px;
+  overflow-wrap: anywhere;
+}
+.finale-heading .finale-subtitle {
+  font-size: 20px;
+  line-height: 1.35;
+  max-width: 270px;
+  margin: 0 auto;
+  color: #ffeddf;
+  text-shadow: 0 2px 6px #1d1230;
+}
+.celebration-landscape {
+  position: absolute;
+  top: 30%;
+  left: 0;
+  width: 100%;
+  height: 40%;
+  object-fit: cover;
+  object-position: center;
+  mask-image: linear-gradient(transparent, #000 12%, #000 78%, transparent);
+  z-index: 0;
+  opacity: 0.5;
+  transition:
+    opacity 3s,
+    filter 3s;
+  filter: saturate(0.5);
+}
+.finale-stage-2 .celebration-landscape,
+.finale-stage-3 .celebration-landscape,
+.finale-stage-4 .celebration-landscape,
+.finale-stage-5 .celebration-landscape {
+  opacity: 1;
+  filter: saturate(1.1);
+}
+.finale-breath {
+  position: absolute;
+  top: 20%;
+  width: 100%;
+  text-align: center;
+  color: #dec9e4;
+  z-index: 6;
+  font-size: 17px;
+  font-style: italic;
+}
+.final-wish-card {
+  position: relative;
+  z-index: 6;
+  margin-top: clamp(190px, 28svh, 265px);
+  padding: 21px 20px;
+  width: 100%;
+  border: 1px solid #ddbad3a6;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #392641ec, #251e36ed);
+  box-shadow: 0 0 28px #ddb2d336;
+  text-align: center;
+}
+.final-wish-card > svg {
+  margin: 0 auto 12px;
+  color: #f0d1aa;
+}
+.final-wish-card p {
+  font-size: 18px;
+  line-height: 1.45;
+  margin: 0 0 12px;
+  color: #f3e3e6;
+}
+.final-wish-card p:last-child {
+  margin: 0;
+}
+.finale-controls {
+  position: relative;
+  z-index: 7;
+  width: 100%;
+  text-align: center;
+  margin: 24px 0 7px;
+}
+.finale-controls .magic-button {
+  font-size: 19px;
+  gap: 12px;
+}
+.finale-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 12px;
+  margin-top: 10px;
+}
+.finale-secondary .text-button {
+  font-size: 15px;
+  min-height: 44px;
+  text-decoration: none;
+}
+.card-save-status {
+  font-size: 13px;
+  line-height: 1.35;
+  color: #cdb6d3;
+  margin: 7px 0 0;
+  min-height: 34px;
+}
+.shooting-star {
+  position: absolute;
+  top: 9%;
+  left: -20%;
+  width: 105px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ffdd9a);
+  box-shadow: 0 0 9px #ffe4ad;
+  transform: rotate(22deg);
+  animation: shootAcross 1.4s ease-out both;
+  z-index: 4;
+}
+.lanterns {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 3;
+}
+.lantern {
+  position: absolute;
+  bottom: -70px;
+  width: 18px;
+  height: 27px;
+  border: 1px solid #ffe0a9;
+  border-radius: 5px 5px 7px 7px;
+  background: linear-gradient(90deg, #e8a277, #ffdb9d 50%, #eeb887);
+  box-shadow:
+    0 0 15px #ffca8a80,
+    inset 0 0 7px #fff0ce;
+  animation: lanternRise 13s linear infinite;
+}
+.lantern:before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  bottom: -3px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffddaa;
+  box-shadow: 0 0 8px #ffd194;
+}
+.lantern:nth-child(3n) {
+  width: 12px;
+  height: 20px;
+  opacity: 0.65;
+}
+.fireworks {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+.firework {
+  position: absolute;
+  left: 15%;
+  top: 10%;
+  width: 1px;
+  height: 1px;
+}
+.firework-1 {
+  left: 85%;
+  top: 12%;
+  color: #b5b8ff;
+}
+.firework-2 {
+  left: 75%;
+  top: 34%;
+}
+.firework i {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 13px;
+  background: linear-gradient(transparent, #ffdfab);
+  border-radius: 3px;
+  box-shadow: 0 0 6px #ffbce0;
+  transform-origin: center bottom;
+  opacity: 0;
+  animation: fireworkRay 4.8s ease-out infinite;
+  animation-delay: var(--delay);
+}
+.firework-1 i {
+  background: linear-gradient(transparent, #d1b1ff);
+}
+.finale-confetti {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  overflow: hidden;
+}
+.finale-confetti i {
+  position: absolute;
+  top: -20px;
+  width: 4px;
+  height: 8px;
+  opacity: 0;
+  border-radius: 1px;
+  animation: confettiFall 6s ease-in both;
+}
+.finale-confetti i:nth-child(3n) {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+}
+@keyframes untieRibbon {
+  0% {
+    opacity: 0.8;
+    scale: 1;
+  }
+  60% {
+    opacity: 0.8;
+    scale: 1.8;
+    translate: 0 -20px;
+  }
+  100% {
+    opacity: 0;
+    scale: 2.2;
+    translate: 0 -35px;
+  }
+}
+@keyframes shootAcross {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    translate: 600px 180px;
+  }
+}
+@keyframes lanternRise {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+    rotate: -6deg;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    translate: 30px -1100px;
+    rotate: 8deg;
+  }
+}
+@keyframes fireworkRay {
+  0%,
+  8% {
+    opacity: 0;
+    transform: rotate(var(--ray)) translateY(0) scaleY(0.2);
+  }
+  15% {
+    opacity: 1;
+  }
+  45% {
+    opacity: 0;
+    transform: rotate(var(--ray)) translateY(-55px) scaleY(0.7);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--ray)) translateY(-65px) scaleY(0.2);
+  }
+}
+@keyframes confettiFall {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  8% {
+    opacity: 0.7;
+  }
+  85% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+    translate: 15px 1000px;
+    rotate: var(--turn);
+  }
+}
+@media (min-width: 600px) {
+  .controls {
+    top: max(42px, env(safe-area-inset-top));
+  }
+  .finale-scene {
+    min-height: calc(100svh - 44px);
+  }
+}
+@media (max-height: 740px) {
+  .gift-theatre {
+    height: 290px;
+    margin-top: 15px;
+  }
+  .gift-action > p {
+    font-size: 19px;
+  }
+  .gift-stage-5 .gift-theatre {
+    height: 150px;
+  }
+  .finale-scene {
+    padding-top: 88px;
+  }
+  .finale-heading > p:first-child {
+    font-size: 29px;
+  }
+  .finale-heading h1 {
+    font-size: 64px;
+  }
+  .finale-heading .finale-subtitle {
+    font-size: 18px;
+  }
+  .finale-heading {
+    min-height: 155px;
+  }
+  .final-wish-card {
+    margin-top: 180px;
+    padding: 17px;
+  }
+  .final-wish-card p {
+    font-size: 17px;
+  }
+  .finale-controls {
+    margin-top: 18px;
+  }
+}
+@media (max-width: 340px) {
+  .gift-theatre {
+    height: 280px;
+  }
+  .gift-stage-5 .gift-theatre {
+    height: 140px;
+  }
+  .gift-message {
+    padding: 24px 18px;
+  }
+  .gift-message p {
+    font-size: 18px;
+  }
+  .gift-message .magic-button {
+    font-size: 16px;
+    padding: 12px;
+  }
+  .finale-heading h1 {
+    font-size: 64px;
+  }
+  .finale-heading > p:first-child {
+    font-size: 29px;
+  }
+  .finale-secondary {
+    gap: 0 6px;
+  }
+  .finale-secondary .text-button {
+    font-size: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gift-theatre,
+  .gift-box,
+  .gift-lock,
+  .gift-platform,
+  .gift-darkness,
+  .gift-beam,
+  .aurora,
+  .celebration-landscape,
+  .finale-sky:after {
+    transition: none;
+  }
+  .shooting-star,
+  .fireworks,
+  .finale-confetti {
+    display: none;
+  }
+  .lantern {
+    animation: none;
+    bottom: auto;
+    top: 27%;
+    opacity: 0.6;
+  }
+  .lantern:nth-child(even) {
+    top: 40%;
+  }
+  .gift-ribbon {
+    display: none;
+  }
+}

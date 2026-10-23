@@ -9,6 +9,8 @@ export type Progress = {
   games: GameId[];
   magicKey: boolean;
   butterfly: boolean;
+  giftUnlocked: boolean;
+  giftOpened: boolean;
 };
 const storageKey = "romjan-universe-progress-v1";
 const empty: Progress = {
@@ -19,6 +21,8 @@ const empty: Progress = {
   games: [],
   magicKey: false,
   butterfly: false,
+  giftUnlocked: false,
+  giftOpened: false,
 };
 function readProgress(): Progress {
   try {
@@ -46,11 +50,14 @@ function readProgress(): Progress {
       : [];
     const unlocked = games.length === 3;
     let scene = Number.isInteger(raw.scene)
-      ? Math.max(0, Math.min(7, raw.scene))
+      ? Math.max(0, Math.min(8, raw.scene))
       : 0;
     if (foundWishes.length < 5) scene = Math.min(scene, 3);
     if (foundFlowers.length < 3) scene = Math.min(scene, 4);
-    if (!unlocked) scene = Math.min(scene, 6);
+    const giftUnlocked = unlocked && raw.giftUnlocked === true;
+    const giftOpened = giftUnlocked && raw.giftOpened === true;
+    // Scene 08 can show its locked state; the finale requires the revealed gift.
+    if (scene === 8 && !giftOpened) scene = 7;
     return {
       scene,
       wishes: foundWishes,
@@ -59,6 +66,8 @@ function readProgress(): Progress {
       games,
       magicKey: unlocked,
       butterfly: raw.butterfly === true,
+      giftUnlocked,
+      giftOpened,
     };
   } catch {
     return empty;

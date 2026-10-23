@@ -74,6 +74,7 @@ export function ConstellationScene({
           <button
             key={wish.id}
             className={`wish-star ${discovered.includes(wish.id) ? "discovered" : ""}`}
+            data-sound="star"
             style={{ left: `${positions[i][0]}%`, top: `${positions[i][1]}%` }}
             onClick={() => {
               setSelected(i);

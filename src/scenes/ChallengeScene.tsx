@@ -61,6 +61,7 @@ function StarCatcher({ onComplete }: { onComplete: () => void }) {
             <motion.button
               key={count}
               className="catch-star"
+              data-sound="star"
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.5 }}

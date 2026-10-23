@@ -18,6 +18,7 @@ export function InvitationScene({ onNext }: { onNext: () => void }) {
       </h1>
       <motion.button
         className="envelope"
+        data-sound="envelope"
         aria-label="Open your magical birthday invitation"
         disabled={opening}
         onClick={() => setOpening(true)}

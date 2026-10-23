@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { AnimatePresence, motion, MotionConfig } from "motion/react";
-import { ArrowLeft, Music2, VolumeX } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { InvitationScene } from "./scenes/InvitationScene";
 import { BirthdayLetterScene } from "./scenes/BirthdayLetterScene";
 import { DreamPortalScene } from "./scenes/DreamPortalScene";
@@ -10,18 +10,26 @@ import { ConstellationScene } from "./scenes/ConstellationScene";
 import { GardenScene } from "./scenes/GardenScene";
 import { MemoryScene } from "./scenes/MemoryScene";
 import { ChallengeScene } from "./scenes/ChallengeScene";
-import { GiftEntryScene } from "./scenes/GiftEntryScene";
+import { SecretGiftScene } from "./scenes/SecretGiftScene";
+import { CelebrationScene } from "./scenes/CelebrationScene";
+import { AudioProvider, MusicControl } from "./audio";
+import { birthday } from "./config";
 import { useProgress, type GameId } from "./progress";
 import "./style.css";
 import "./worlds.css";
+import "./finale.css";
 
 function App() {
   const { progress, setProgress, saveError } = useProgress();
   const scene = progress.scene;
   const setScene = (next: number) =>
-    setProgress((p) => ({ ...p, scene: Math.max(0, Math.min(7, next)) }));
+    setProgress((p) => ({ ...p, scene: Math.max(0, Math.min(8, next)) }));
   const advance = (from: number) =>
-    setProgress((p) => (p.scene === from ? { ...p, scene: from + 1 } : p));
+    setProgress((p) =>
+      p.scene === from && (from !== 7 || p.giftOpened)
+        ? { ...p, scene: Math.min(8, from + 1) }
+        : p,
+    );
   const discoverWish = (id: string) =>
     setProgress((p) =>
       p.wishes.includes(id) ? p : { ...p, wishes: [...p.wishes, id] },
@@ -39,53 +47,28 @@ function App() {
       const games = p.games.includes(id) ? p.games : [...p.games, id];
       return { ...p, games, magicKey: games.length === 3 };
     });
-  const [music, setMusic] = useState(false);
-  const audio = useRef<AudioContext | null>(null);
-  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const heading = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    heading.current?.focus();
+    heading.current?.focus({ preventScroll: true });
   }, [scene]);
-  useEffect(
-    () => () => {
-      if (timer.current) clearInterval(timer.current);
-      void audio.current?.close();
-    },
-    [],
-  );
-  async function toggleMusic() {
-    if (music) {
-      if (timer.current) clearInterval(timer.current);
-      await audio.current?.suspend();
-      setMusic(false);
-      return;
-    }
-    audio.current ??= new AudioContext();
-    await audio.current.resume();
-    const ctx = audio.current;
-    const notes = [261.63, 329.63, 392, 523.25, 440, 392, 329.63, 293.66];
-    let i = 0;
-    const play = () => {
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = "sine";
-      o.frequency.value = notes[i++ % notes.length];
-      g.gain.setValueAtTime(0, ctx.currentTime);
-      g.gain.linearRampToValueAtTime(0.035, ctx.currentTime + 0.1);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.8);
-      o.connect(g);
-      g.connect(ctx.destination);
-      o.start();
-      o.stop(ctx.currentTime + 3);
+  useEffect(() => {
+    document.title = `Happy Birthday ${birthday.name} | A Little Universe for You`;
+    const visibility = () =>
+      document.documentElement.classList.toggle("page-hidden", document.hidden);
+    visibility();
+    document.addEventListener("visibilitychange", visibility);
+    return () => {
+      document.removeEventListener("visibilitychange", visibility);
+      document.documentElement.classList.remove("page-hidden");
     };
-    play();
-    timer.current = setInterval(play, 1050);
-    setMusic(true);
-  }
+  }, []);
   return (
     <MotionConfig reducedMotion="user">
       <div className="desktop-aura" />
-      <main className="universe" aria-label="Romjan's birthday universe">
+      <main
+        className="universe"
+        aria-label={`${birthday.name}'s birthday universe`}
+      >
         <StarField />
         <nav className="controls">
           {scene > 0 ? (
@@ -99,24 +82,22 @@ function App() {
           ) : (
             <span className="tiny-star">✧</span>
           )}
-          <button
-            className="icon-button"
-            onClick={toggleMusic}
-            aria-label={music ? "Mute music" : "Play music"}
-            aria-pressed={music}
-          >
-            {music ? <Music2 size={19} /> : <VolumeX size={19} />}
-          </button>
+          <MusicControl />
         </nav>
         <div className="scene-host" ref={heading} tabIndex={-1}>
-          <AnimatePresence mode="wait">
+          <AnimatePresence
+            mode="wait"
+            onExitComplete={() =>
+              window.scrollTo({ top: 0, behavior: "instant" })
+            }
+          >
             <motion.div
               className="scene"
               key={scene}
               initial={{ opacity: 0, filter: "blur(8px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, filter: "blur(12px)", scale: 1.06 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             >
               {scene === 0 ? (
                 <InvitationScene onNext={() => advance(0)} />
@@ -153,14 +134,32 @@ function App() {
                   complete={completeGame}
                   onNext={() => advance(6)}
                 />
+              ) : scene === 7 ? (
+                <SecretGiftScene
+                  magicKey={progress.magicKey}
+                  giftUnlocked={progress.giftUnlocked}
+                  giftOpened={progress.giftOpened}
+                  onUnlock={() =>
+                    setProgress((p) =>
+                      p.magicKey ? { ...p, giftUnlocked: true } : p,
+                    )
+                  }
+                  onOpened={() =>
+                    setProgress((p) =>
+                      p.giftUnlocked ? { ...p, giftOpened: true } : p,
+                    )
+                  }
+                  onChallenge={() => setScene(6)}
+                  onNext={() => advance(7)}
+                />
               ) : (
-                <GiftEntryScene />
+                <CelebrationScene onReplay={() => setScene(0)} />
               )}
             </motion.div>
           </AnimatePresence>
         </div>
-        <footer className="progress" aria-label={`Scene ${scene + 1} of 8`}>
-          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+        <footer className="progress" aria-label={`Scene ${scene + 1} of 9`}>
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <span key={i} className={i === scene ? "active" : ""} />
           ))}
         </footer>
@@ -176,6 +175,8 @@ function App() {
 }
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
+    <AudioProvider>
+      <App />
+    </AudioProvider>
   </React.StrictMode>,
 );

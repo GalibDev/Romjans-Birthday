@@ -14,9 +14,38 @@ export const birthday = {
     "memories",
     "challenge",
     "gift",
-    "farewell",
+    "celebration",
   ],
 } as const;
+
+export type PersonalMedia = {
+  photo?: string;
+  voice?: string;
+  video?: string;
+  ambientMusic?: string;
+};
+// Set local /media/... paths here when personal media is available.
+export const personalMedia: PersonalMedia = {};
+export const giftMessage = {
+  greeting: `Dear ${birthday.name},`,
+  paragraphs: [
+    "Life is filled with countless moments, but some people make those moments a little brighter.",
+    "You are one of those people.",
+    "On your birthday, I wish you happiness, good health, success, and countless reasons to smile.",
+    "May the coming year bring you beautiful memories, exciting opportunities, and dreams worth chasing.",
+  ],
+  birthdayWish: `Happy Birthday, ${birthday.name}!`,
+  signoff: "Keep shining, always.",
+};
+export const finalWishes = {
+  subtitle: "The universe is brighter because you exist.",
+  paragraphs: [
+    "May your days be filled with happiness, your heart with peace, and your future with wonderful possibilities.",
+    "Keep dreaming, keep smiling, and keep being the amazing person you are.",
+  ],
+  cardWish:
+    "May your days be filled with happiness, your heart with peace, and your future with wonderful possibilities.",
+};
 
 export const wishes = [
   {

@@ -33,7 +33,7 @@ export function DreamPortalScene({ onNext }: { onNext: () => void }) {
           <br />
           and little wonders.
         </p>
-        <MagicalButton onClick={() => setEntering(true)}>
+        <MagicalButton sound="portal" onClick={() => setEntering(true)}>
           {entering ? "Into the magic…" : "Let's Begin"}
         </MagicalButton>
       </div>

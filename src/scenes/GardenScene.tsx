@@ -70,6 +70,7 @@ export function GardenScene({
           <motion.button
             key={i}
             className={`flower-button ${viewed.includes(i) ? "bloomed" : ""}`}
+            data-sound="chime"
             style={{ left: `${positions[i][0]}%`, top: `${positions[i][1]}%` }}
             whileTap={{ scale: 1.2 }}
             onClick={() => {
