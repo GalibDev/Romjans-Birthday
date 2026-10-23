@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Star, Check, Sparkles } from "lucide-react";
+import { Star, Sparkles } from "lucide-react";
 import { wishes } from "../config";
 import { MagicalButton } from "../components/MagicalButton";
 import { MagicDialog } from "../components/MagicDialog";
@@ -85,7 +85,7 @@ export function ConstellationScene({
             <Star size={47} strokeWidth={1} />
             <span>{wish.title}</span>
             {discovered.includes(wish.id) && (
-              <Check className="star-check" size={13} />
+              <Sparkles className="star-check" size={15} />
             )}
           </button>
         ))}

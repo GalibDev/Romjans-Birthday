@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { Flower2, Check } from "lucide-react";
 import { flowers } from "../config";
@@ -6,12 +6,68 @@ import { WorldHeading } from "../components/WorldHeading";
 import { MagicalButton } from "../components/MagicalButton";
 import { MagicDialog } from "../components/MagicDialog";
 const positions = [
-  [22, 20],
-  [74, 30],
-  [34, 51],
-  [79, 72],
-  [20, 85],
+  [23, 17],
+  [75, 32],
+  [33, 49],
+  [75, 70],
+  [24, 84],
 ];
+function MagicalBloom() {
+  const id = useId();
+  return (
+    <svg
+      className="magical-bloom"
+      viewBox="0 0 72 76"
+      width="64"
+      height="68"
+      aria-hidden="true"
+    >
+      <defs>
+        <radialGradient id={id}>
+          <stop stopColor="#fff0f7" />
+          <stop offset=".45" stopColor="#d9b0f3" />
+          <stop offset="1" stopColor="#8750b5" />
+        </radialGradient>
+        <radialGradient id={`${id}-gold`}>
+          <stop stopColor="#fff5c9" />
+          <stop offset="1" stopColor="#deaa72" />
+        </radialGradient>
+      </defs>
+      <g fill={`url(#${id})`} stroke="#f2c9ee" strokeWidth=".7">
+        {Array.from({ length: 8 }, (_, i) => (
+          <ellipse
+            key={i}
+            cx="36"
+            cy="22"
+            rx="9"
+            ry="18"
+            transform={`rotate(${i * 45} 36 37)`}
+          />
+        ))}
+      </g>
+      <g fill="none" stroke="#fff0f4" strokeOpacity=".4" strokeWidth=".6">
+        {Array.from({ length: 8 }, (_, i) => (
+          <path
+            key={i}
+            d="M36 36Q32 21 36 7"
+            transform={`rotate(${i * 45} 36 37)`}
+          />
+        ))}
+      </g>
+      <circle cx="36" cy="37" r="9" fill={`url(#${id}-gold)`} />
+      <g fill="#fff4d1">
+        {Array.from({ length: 7 }, (_, i) => (
+          <circle
+            key={i}
+            cx={36 + Math.cos(i) * 5}
+            cy={37 + Math.sin(i) * 5}
+            r="1"
+          />
+        ))}
+      </g>
+    </svg>
+  );
+}
 export function GardenScene({
   viewed,
   secret,
@@ -71,15 +127,20 @@ export function GardenScene({
             key={i}
             className={`flower-button ${viewed.includes(i) ? "bloomed" : ""}`}
             data-sound="chime"
-            style={{ left: `${positions[i][0]}%`, top: `${positions[i][1]}%` }}
-            whileTap={{ scale: 1.2 }}
+            style={{
+              left: `${positions[i][0]}%`,
+              top: `${positions[i][1]}%`,
+              x: "-50%",
+              y: "-50%",
+            }}
+            whileTap={{ scale: 1.08 }}
             onClick={() => {
               discover(i);
               setSelected(i);
             }}
             aria-label={`Explore flower ${i + 1}${viewed.includes(i) ? ", discovered" : ""}`}
           >
-            <Flower2 size={58} strokeWidth={1} />
+            <MagicalBloom />
             <span>
               {
                 [

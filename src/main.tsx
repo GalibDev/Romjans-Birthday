@@ -18,6 +18,7 @@ import { useProgress, type GameId } from "./progress";
 import "./style.css";
 import "./worlds.css";
 import "./finale.css";
+import "./polish.css";
 
 function App() {
   const { progress, setProgress, saveError } = useProgress();

@@ -1,0 +1,869 @@
+/* Final composition adjustments. Personal image pixels and colors stay untouched. */
+:root {
+  --scene-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  --scene-top: calc(84px + env(safe-area-inset-top, 0px));
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 82px;
+}
+body {
+  overflow-x: clip;
+}
+.universe {
+  overflow: clip;
+}
+.scene,
+.world-scene {
+  min-width: 0;
+}
+.world-scene {
+  padding-top: var(--scene-top);
+  padding-bottom: var(--scene-bottom);
+}
+.world-heading {
+  flex-shrink: 0;
+}
+.world-heading h1 {
+  line-height: 1.22;
+}
+.world-heading h1 em {
+  line-height: 1.3;
+}
+.world-heading .eyebrow {
+  margin-bottom: 10px;
+}
+.world-subtitle {
+  margin-top: 9px;
+  line-height: 1.4;
+}
+.controls {
+  top: calc(12px + env(safe-area-inset-top, 0px));
+}
+.progress {
+  bottom: calc(26px + env(safe-area-inset-bottom, 0px));
+  gap: 6px;
+}
+.magic-button {
+  max-width: 100%;
+  box-shadow:
+    0 0 7px #fac6d580,
+    0 0 20px #edb0cc26,
+    inset 0 0 9px #fff6df50;
+  line-height: 1.25;
+}
+.magic-button > svg {
+  flex-shrink: 0;
+}
+.invitation {
+  padding-bottom: var(--scene-bottom);
+  padding-top: 16svh;
+}
+.envelope {
+  margin-top: 13svh;
+  filter: drop-shadow(0 0 9px #ffbdc54a);
+}
+.invitation-caption {
+  margin-top: 0;
+}
+.invitation-caption p {
+  margin-bottom: 12px;
+}
+.letter-scene {
+  padding: var(--scene-top) 30px var(--scene-bottom);
+  gap: 25px;
+  justify-content: center;
+}
+.parchment {
+  width: min(100%, 316px);
+  padding: 22px 24px 28px;
+}
+.parchment h1 {
+  font-size: 58px;
+  margin: 0 0 11px;
+}
+.parchment p {
+  font-size: 18px;
+  line-height: 1.34;
+  margin-bottom: 12px;
+}
+.parchment .ready {
+  margin-top: 18px;
+}
+.letter-cta {
+  margin-top: 0;
+}
+.crystal-top {
+  width: 112px;
+  top: 10%;
+  right: 0;
+}
+.crystal-bottom {
+  width: 126px;
+  left: -44px;
+  bottom: 20%;
+  z-index: 5;
+}
+.portal-scene {
+  padding-top: var(--scene-top);
+  padding-bottom: var(--scene-bottom);
+}
+.portal-scene h1 {
+  font-size: 61px;
+  line-height: 1.2;
+}
+.portal-scene h2 {
+  font-size: 27px;
+  margin: -3px 0 0 84px;
+}
+.portal-world {
+  inset: 30% 0 0;
+  overflow: visible;
+}
+.portal-world img {
+  object-fit: cover;
+  object-position: center top;
+}
+.portal-ring {
+  left: 5%;
+  top: 2%;
+  width: 90%;
+  border-width: 1px;
+  box-shadow:
+    0 0 14px #efa6ff70,
+    inset 0 0 12px #f2b7ff50;
+}
+.portal-copy {
+  bottom: var(--scene-bottom);
+  padding: 0 26px;
+}
+.portal-copy p {
+  display: table;
+  margin: 0 auto 14px;
+  padding: 8px 17px;
+  border-radius: 18px;
+  background: radial-gradient(ellipse, #19152be6, #19152b88 65%, transparent);
+  font-size: 18px;
+  line-height: 1.35;
+  color: #fff1e6;
+  text-shadow: 0 1px 5px #090619;
+}
+.portal-copy .magic-button {
+  min-width: min(245px, 100%);
+}
+.constellation-map {
+  width: calc(100% - 14px);
+  margin-top: 14px;
+  height: clamp(280px, 39svh, 355px);
+  flex-shrink: 0;
+}
+.wish-star span {
+  position: relative;
+  z-index: 2;
+  width: 108px;
+  line-height: 1.2;
+  padding: 4px 5px;
+  margin-top: 5px;
+  border-radius: 12px;
+  background: radial-gradient(ellipse, #17152ce8, #17152b7d 75%, transparent);
+  font-size: 15px;
+  text-shadow: 0 1px 4px #080815;
+}
+.wish-star.discovered:before {
+  content: "";
+  position: absolute;
+  width: 61px;
+  height: 61px;
+  top: -2px;
+  border: 1px solid #ffe3b955;
+  border-radius: 50%;
+  box-shadow:
+    0 0 14px #ffe0aa24,
+    inset 0 0 12px #f7c5ef24;
+  animation: discoveredHalo 2.8s ease-in-out infinite alternate;
+}
+.wish-star .star-check {
+  right: 6px;
+  top: -4px;
+  filter: drop-shadow(0 0 4px #ffe3ae);
+}
+.constellation-lines line {
+  stroke-width: 0.24;
+}
+.garden-blooms {
+  height: clamp(300px, 41svh, 365px);
+  flex-shrink: 0;
+  margin-top: 18px;
+}
+.garden-art {
+  inset: 27% -2% 0;
+}
+.garden-sanctuary {
+  height: 52%;
+  mask-image: linear-gradient(transparent, #000 13%, #000 75%, transparent);
+}
+.garden-flower-art {
+  width: 72%;
+  height: 28%;
+  opacity: 0.92;
+  right: -5%;
+  mask-image: radial-gradient(ellipse, #000 40%, transparent 75%);
+}
+.flower-button {
+  width: 104px;
+}
+.flower-button .magical-bloom {
+  fill: none;
+  stroke: none;
+  filter: drop-shadow(0 0 6px #c993ee70);
+  transition:
+    filter 0.5s,
+    scale 0.5s;
+}
+.flower-button.bloomed .magical-bloom {
+  fill: none;
+  filter: drop-shadow(0 0 10px #ffd3eb90);
+  scale: 1.08;
+}
+.flower-button.bloomed:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 20px;
+  width: 65px;
+  height: 65px;
+  border: 1px solid #ffe7c455;
+  border-radius: 50%;
+  animation: petalBloom 1s ease-out both;
+  pointer-events: none;
+}
+.flower-button span {
+  padding: 6px 8px;
+  margin-top: 5px;
+  line-height: 1.2;
+  white-space: normal;
+  min-width: 94px;
+  max-width: 116px;
+  border-radius: 6px;
+  font-size: 14px;
+  box-shadow:
+    0 3px 10px #15112644,
+    0 0 10px #d49bdb28;
+  transform: rotate(-3deg);
+}
+.flower-button:nth-child(even) span {
+  transform: rotate(3deg);
+}
+.flower-button > svg:last-child:not(:first-child) {
+  right: 7px;
+  top: 1px;
+}
+.discovery-count {
+  margin-bottom: 12px;
+}
+.world-bottom {
+  padding-top: 14px;
+}
+.memory-stage {
+  max-width: 275px;
+  padding: 7px 0 10px;
+  margin-top: 18px;
+}
+.memory-stage .polaroid {
+  width: 88%;
+  padding: 10px 10px 15px;
+  box-shadow:
+    0 10px 25px #09091b66,
+    0 0 18px #f5c2e140,
+    inset 0 0 0 1px #fff8ef80;
+}
+.memory-caption {
+  font-size: 17px;
+  line-height: 1.25;
+  min-height: 3.75em;
+  margin-top: 5px;
+}
+.polaroid-inscription {
+  margin-top: 9px;
+}
+.gallery-controls {
+  margin-top: 9px;
+  gap: 28px;
+}
+.memory-description {
+  font-size: 14px;
+  line-height: 1.35;
+  margin-top: 10px;
+  min-height: 2.7em;
+}
+.memory-scene .world-bottom {
+  padding-top: 10px;
+}
+.memory-scene .gentle-hint {
+  margin: 5px 0;
+}
+.challenge-scene {
+  padding-top: calc(var(--scene-top) + 4px);
+  justify-content: flex-start;
+}
+.challenge-scene .world-heading h1 em {
+  font-size: 44px;
+}
+.challenge-scene .world-subtitle {
+  max-width: 280px;
+  font-size: 16px;
+}
+.challenge-list {
+  gap: 12px;
+  margin-top: 22px;
+  flex-shrink: 0;
+}
+.challenge-card {
+  padding: 15px;
+  gap: 14px;
+  border-radius: 18px;
+  min-height: 109px;
+}
+.challenge-info {
+  min-width: 0;
+}
+.challenge-info strong {
+  font-size: 21px;
+  line-height: 1.2;
+  overflow-wrap: break-word;
+}
+.challenge-info small {
+  font-size: 14px;
+  line-height: 1.3;
+  margin: 5px 0 10px;
+}
+.challenge-start {
+  min-height: 32px;
+  align-items: center;
+}
+.challenge-status {
+  margin-top: 17px;
+}
+.locked-key,
+.key-reward {
+  margin-top: 17px;
+}
+.key-reward p {
+  font-size: 21px;
+  margin: 12px 0 18px;
+}
+.key-reward .magic-button {
+  font-size: 16px;
+}
+.locked-key p {
+  margin-bottom: 0;
+}
+.magic-dialog {
+  max-height: calc(
+    100dvh - 32px - env(safe-area-inset-top, 0px) -
+      env(safe-area-inset-bottom, 0px)
+  );
+  padding: 72px 23px 27px;
+  scrollbar-width: thin;
+}
+.dialog-audio,
+.dialog-close {
+  top: 14px;
+  width: 42px;
+  height: 42px;
+}
+.dialog-audio {
+  left: 14px;
+}
+.dialog-close {
+  right: 14px;
+}
+.magic-dialog::backdrop {
+  background: radial-gradient(ellipse, #151029bd, #060713e8);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+.key-dialog {
+  width: min(352px, calc(100vw - 32px));
+  background:
+    radial-gradient(ellipse at 50% 28%, #79526890, transparent 60%),
+    linear-gradient(155deg, #36223f, #1c1730);
+  overflow-y: auto;
+  border-color: #eccca685;
+  box-shadow: 0 0 45px #d4a9cb30;
+}
+.key-dialog .golden-key {
+  margin: 5px auto 21px;
+}
+.key-dialog h2 {
+  margin: 12px 0;
+  font-size: 29px;
+}
+.key-dialog .wish-message {
+  margin: 12px 0 22px;
+  font-size: 22px;
+}
+.key-dialog .magic-button {
+  font-size: 16px;
+  padding: 13px 15px;
+  gap: 9px;
+}
+.key-dialog .text-button {
+  font-size: 16px;
+  margin: 10px auto 0;
+}
+/* Both closed layers use the same image coordinates; only the lid moves. */
+.gift-scene .world-heading h1 {
+  font-size: 29px;
+}
+.gift-scene .world-heading h1 em {
+  font-size: 40px;
+}
+.gift-scene .world-subtitle {
+  max-width: 285px;
+  font-size: 16px;
+}
+.gift-theatre {
+  height: clamp(285px, 40svh, 350px);
+  margin-top: 20px;
+  flex-shrink: 0;
+}
+.gift-box {
+  width: min(88%, 285px);
+  aspect-ratio: 221/284;
+  top: 0;
+  filter: drop-shadow(0 0 12px #edb2e45a);
+}
+.gift-base,
+.gift-lid {
+  top: 0;
+  width: 100%;
+  height: auto;
+  mask-image: linear-gradient(transparent, #000 3%, #000 94%, transparent);
+}
+.gift-base {
+  clip-path: inset(0);
+}
+.gift-lid {
+  clip-path: inset(0 0 61.27% 0);
+  transform-origin: 50% 35%;
+}
+.gift-box-open .gift-base {
+  clip-path: inset(38.4% 0 0 0);
+}
+.gift-opening .gift-box {
+  filter: drop-shadow(0 0 20px #ffe0b17a);
+}
+.gift-lock {
+  left: 66%;
+  top: 43%;
+  width: 46px;
+  height: 51px;
+  border-radius: 45%;
+  background: radial-gradient(ellipse, #ffeac1db, #9e7132e6);
+  box-shadow:
+    0 0 12px #ffd89180,
+    inset 0 0 7px #ffeac0;
+}
+.gift-lock svg {
+  width: 27px;
+  height: 27px;
+}
+.gift-ribbon {
+  top: 12%;
+  height: 30%;
+}
+.gift-beam {
+  left: 17%;
+  right: 17%;
+  bottom: 22%;
+  height: 86%;
+  filter: blur(7px);
+  background: linear-gradient(0deg, #ffdebca6, #edc0fa30, transparent);
+}
+.gift-darkness {
+  inset: -160px -30px -70px;
+}
+.gift-action {
+  margin-top: 4px;
+}
+.gift-action > p {
+  font-size: 19px;
+  margin: 8px 0;
+}
+.draggable-key {
+  min-height: 57px;
+  padding: 7px 23px;
+  gap: 18px;
+  margin-top: 10px;
+  box-shadow: 0 0 17px #eac2ef29;
+}
+.draggable-key > svg {
+  width: 39px;
+  height: 39px;
+}
+.draggable-key span {
+  font-size: 19px;
+}
+.gift-action .gentle-hint {
+  font-size: 14px;
+  margin: 12px 0 0;
+}
+.key-entering {
+  top: 43%;
+  left: 65%;
+}
+.gift-stage-5 .gift-theatre {
+  height: 78px;
+  margin-top: 8px;
+}
+.gift-stage-5 .gift-box {
+  transform: translateX(-50%) scale(0.28);
+  opacity: 0.55;
+}
+.gift-stage-5 .gift-beam,
+.gift-stage-5 .gift-darkness {
+  opacity: 0;
+}
+.gift-message {
+  padding: 21px 20px 24px;
+  border-radius: 21px;
+  margin-bottom: 0;
+}
+.gift-message > svg {
+  width: 20px;
+  height: 20px;
+  margin-bottom: 10px;
+}
+.gift-message .gift-greeting {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+.gift-message p {
+  font-size: 18px;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+.gift-message h2 {
+  font-size: 29px;
+  margin: 18px 0 10px;
+}
+.gift-message .gift-signoff {
+  margin-bottom: 14px;
+}
+.gift-message .magic-button {
+  font-size: 16px;
+  padding: 12px 15px;
+  margin-top: 12px;
+}
+.gift-message .personal-media img {
+  width: min(100%, 176px);
+  height: auto;
+  max-height: none;
+  margin: 17px auto 20px;
+  border-radius: 10px;
+  box-shadow:
+    0 0 0 4px #fff0e514,
+    0 8px 18px #0d0a2338;
+}
+.unlock-whisper {
+  min-height: 70px;
+}
+.finale-scene {
+  padding-top: var(--scene-top);
+}
+.finale-heading {
+  min-height: 155px;
+}
+.finale-heading > p:first-child {
+  font-size: 31px;
+}
+.finale-heading h1 {
+  font-size: 68px;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.finale-heading .finale-subtitle {
+  font-size: 18px;
+  line-height: 1.35;
+  max-width: 265px;
+}
+.finale-moon {
+  top: 54px;
+  opacity: 0.65;
+  width: 158px;
+  height: 158px;
+}
+.celebration-landscape {
+  top: 245px;
+  height: 300px;
+  object-position: center 48%;
+  mask-image: linear-gradient(transparent, #000 12%, #000 79%, transparent);
+}
+.final-wish-card {
+  margin-top: clamp(145px, 22svh, 195px);
+  padding: 17px 18px;
+  border-radius: 19px;
+  background: linear-gradient(150deg, #49304de8, #251e36f2);
+  box-shadow: 0 0 22px #ddb2d32b;
+}
+.final-wish-card > svg {
+  margin-bottom: 8px;
+  width: 19px;
+  height: 19px;
+}
+.final-wish-card p {
+  font-size: 17px;
+  line-height: 1.38;
+  margin-bottom: 10px;
+}
+.finale-controls {
+  margin-top: 18px;
+  margin-bottom: 0;
+}
+.finale-controls .magic-button {
+  min-height: 48px;
+  font-size: 18px;
+}
+.finale-secondary {
+  margin-top: 8px;
+  gap: 0 10px;
+}
+.card-save-status {
+  font-size: 12px;
+  min-height: 28px;
+  margin-top: 4px;
+}
+.firework i {
+  height: 15px;
+  box-shadow: 0 0 7px #ffbce08c;
+}
+.finale-stage-5 .fireworks {
+  filter: drop-shadow(0 0 4px #ffd9c94d);
+}
+@keyframes discoveredHalo {
+  to {
+    box-shadow:
+      0 0 20px #ffe0aa40,
+      inset 0 0 15px #f7c5ef30;
+    border-color: #ffe3b988;
+  }
+}
+@keyframes petalBloom {
+  from {
+    scale: 0.65;
+    opacity: 0.9;
+  }
+  to {
+    scale: 1.55;
+    opacity: 0;
+  }
+}
+@media (min-width: 600px) {
+  .controls {
+    top: calc(34px + env(safe-area-inset-top, 0px));
+  }
+  .world-scene {
+    min-height: calc(100svh - 44px);
+  }
+}
+@media (max-height: 740px) {
+  .letter-scene {
+    padding-top: 78px;
+    gap: 20px;
+  }
+  .parchment {
+    padding: 17px 23px 25px;
+  }
+  .parchment h1 {
+    font-size: 49px;
+    margin-bottom: 7px;
+  }
+  .parchment p {
+    font-size: 17px;
+    margin-bottom: 9px;
+  }
+  .parchment .ready {
+    margin-top: 14px;
+  }
+  .invitation {
+    padding-top: 16svh;
+  }
+  .envelope {
+    margin-top: 11svh;
+    width: 84%;
+  }
+  .invitation-caption p {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  .touch-spark {
+    font-size: 32px;
+  }
+  .portal-scene header p {
+    font-size: 22px;
+  }
+  .portal-scene h1 {
+    font-size: 53px;
+  }
+  .portal-scene h2 {
+    font-size: 25px;
+  }
+  .portal-world {
+    top: 31%;
+  }
+  .portal-copy p {
+    font-size: 16px;
+    padding: 7px 14px;
+    margin-bottom: 10px;
+  }
+  .memory-stage {
+    max-width: 235px;
+    margin-top: 12px;
+  }
+  .memory-caption {
+    font-size: 16px;
+    min-height: 3.75em;
+  }
+  .memory-description {
+    margin-top: 6px;
+    font-size: 13px;
+  }
+  .gallery-controls {
+    margin-top: 5px;
+  }
+  .gift-theatre {
+    height: 275px;
+    margin-top: 15px;
+  }
+  .gift-box {
+    width: min(84%, 250px);
+  }
+  .gift-stage-5 .gift-theatre {
+    height: 68px;
+  }
+  .finale-heading {
+    min-height: 145px;
+  }
+  .finale-heading h1 {
+    font-size: 61px;
+  }
+  .final-wish-card {
+    margin-top: 140px;
+  }
+  .celebration-landscape {
+    top: 220px;
+    height: 270px;
+  }
+  .challenge-list {
+    margin-top: 18px;
+  }
+  .challenge-card {
+    min-height: 105px;
+  }
+  .world-scene {
+    padding-bottom: var(--scene-bottom);
+  }
+}
+@media (max-width: 340px) {
+  .world-scene {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .world-heading h1 em {
+    font-size: 39px;
+  }
+  .wish-star span {
+    width: 84px;
+    font-size: 13px;
+  }
+  .flower-button span {
+    font-size: 13px;
+    min-width: 86px;
+    max-width: 100px;
+  }
+  .flower-button {
+    width: 94px;
+  }
+  .gift-scene .world-heading h1 em {
+    font-size: 35px;
+  }
+  .gift-theatre {
+    height: 255px;
+  }
+  .gift-box {
+    width: 90%;
+    max-width: 230px;
+  }
+  .gift-stage-5 .gift-theatre {
+    height: 65px;
+  }
+  .gift-message {
+    padding: 19px 17px 22px;
+  }
+  .gift-message p {
+    font-size: 17px;
+  }
+  .challenge-info strong {
+    font-size: 19px;
+  }
+  .challenge-card {
+    gap: 10px;
+    padding: 13px 12px;
+  }
+  .challenge-icon {
+    width: 33px;
+  }
+  .finale-heading > p:first-child {
+    font-size: 28px;
+  }
+  .finale-heading h1 {
+    font-size: 59px;
+  }
+  .final-wish-card p {
+    font-size: 16px;
+  }
+  .memory-stage {
+    max-width: 235px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flower-button .magical-bloom,
+  .gift-base {
+    transition: none;
+  }
+  .wish-star.discovered:before {
+    animation: none;
+  }
+  .gift-stage-5 .gift-box {
+    opacity: 0.55;
+  }
+}
+
+/* Let the unified gift's natural ratio reserve its full height before the key. */
+.gift-theatre {
+  height: auto;
+}
+.gift-box {
+  position: relative;
+  width: min(82%, 260px);
+}
+.gift-stage-5 .gift-theatre {
+  height: 78px;
+}
+@media (max-height: 740px) {
+  .gift-box {
+    width: min(82%, 235px);
+  }
+  .gift-stage-5 .gift-theatre {
+    height: 68px;
+  }
+}
+@media (max-width: 340px) {
+  .gift-box {
+    width: min(88%, 225px);
+  }
+  .gift-stage-5 .gift-theatre {
+    height: 65px;
+  }
+}

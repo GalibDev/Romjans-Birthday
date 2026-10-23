@@ -92,25 +92,28 @@ export function SecretGiftScene({
       <div className="gift-theatre">
         <div className="gift-darkness" />
         <div className="gift-beam" aria-hidden="true" />
-        <div className="gift-box">
+        <div className={`gift-box ${stage >= 3 ? "gift-box-open" : ""}`}>
           <motion.img
             className="gift-lid"
-            src="/art/gift-lid.png"
+            src="/art/gift-complete.png"
             alt="A golden ribbon on a magical lavender gift"
             animate={
               stage >= 3
                 ? {
-                    y: reduced ? -12 : -90,
-                    rotate: reduced ? 0 : -9,
-                    opacity: stage >= 5 ? 0.25 : 1,
+                    y: reduced ? -10 : -64,
+                    rotate: reduced ? 0 : -5,
+                    opacity: stage >= 5 ? 0 : 1,
                   }
                 : { y: 0, rotate: 0, opacity: 1 }
             }
-            transition={{ duration: reduced ? 0.1 : 1.6, ease: "easeInOut" }}
+            transition={{
+              duration: reduced ? 0.1 : 1.65,
+              ease: [0.22, 1, 0.36, 1],
+            }}
           />
           <img
             className="gift-base"
-            src="/art/gift-base.png"
+            src="/art/gift-complete.png"
             alt="An ornate purple gift box illuminated with stars"
           />
           <div className="gift-ribbon" aria-hidden="true" />
@@ -134,7 +137,6 @@ export function SecretGiftScene({
             )}
           </button>
         </div>
-        <img className="gift-platform" src="/art/gift-platform.png" alt="" />
         {stage >= 2 && (
           <div className="gift-sparks" aria-hidden="true">
             {Array.from({ length: 18 }, (_, i) => (
